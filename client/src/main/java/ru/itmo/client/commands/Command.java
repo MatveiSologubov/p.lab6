@@ -3,6 +3,9 @@ package ru.itmo.client.commands;
 
 import ru.itmo.common.exceptions.WrongAmountOfArgumentsException;
 
+/**
+ * Abstract command that all others are based on
+ */
 public abstract class Command {
     /**
      * execute command

@@ -4,11 +4,9 @@ import ru.itmo.client.network.UPDClient;
 import ru.itmo.common.exceptions.WrongAmountOfArgumentsException;
 import ru.itmo.common.network.requests.ClearRequest;
 
-public class Clear extends Command {
-    final UPDClient client;
-
+public class Clear extends NetworkCommand {
     public Clear(UPDClient client) {
-        this.client = client;
+        super(client);
     }
 
     /**
