@@ -1,11 +1,69 @@
 package ru.itmo.client;
 
+import ru.itmo.client.commands.*;
+import ru.itmo.client.managers.CommandManager;
+import ru.itmo.client.network.UPDClient;
+
+import java.util.Arrays;
+import java.util.Scanner;
+
 public final class Client {
+    final int PORT = 1234;
+    final int BUFFER_SIZE = 2048;
+    final String HOST = "127.0.0.1";
+    final CommandManager commandManager = new CommandManager();
+    final Scanner scanner = new Scanner(System.in);
+    final UPDClient updClient = new UPDClient(HOST, PORT, BUFFER_SIZE);
+    boolean running = true;
+
     private Client() {
-        throw new UnsupportedOperationException("This is an utility class and can not be instantiated");
+        commandManager.addCommand("help", new Help(commandManager));
+//        commandManager.addCommand("info", new Info(collectionManager));
+        commandManager.addCommand("show", new Show(updClient));
+//        commandManager.addCommand("add", new Add(collectionManager, scannerManager));
+//        commandManager.addCommand("update", new Update(collectionManager, scannerManager));
+//        commandManager.addCommand("remove_by_id", new RemoveById(collectionManager));
+        commandManager.addCommand("clear", new Clear(updClient));
+//        commandManager.addCommand("execute_script", new ExecuteScript(commandManager, scannerManager));
+        commandManager.addCommand("exit", new Exit(this::stop));
+//        commandManager.addCommand("add_if_max", new AddIfMax(collectionManager, scannerManager));
+//        commandManager.addCommand("add_if_min", new AddIfMin(collectionManager, scannerManager));
+//        commandManager.addCommand("remove_greater", new RemoveGreater(collectionManager, scannerManager));
+//        commandManager.addCommand("min_by_creation_date", new MinByCreationDate(collectionManager));
+//        commandManager.addCommand("filter_less_than_type", new FilterLessThanType(collectionManager));
+//        commandManager.addCommand("filter_greater_than_price", new FilterGreaterThanPrice(collectionManager));
     }
 
     public static void main(String[] args) {
-        System.out.println("This is working client");
+        new Client().start();
+    }
+
+    private void stop() {
+        running = false;
+    }
+
+    private void start() {
+        System.out.println("Console program started. Type 'help' for commands.");
+
+        while (running) {
+            System.out.print("> ");
+            String input = scanner.nextLine().trim();
+
+            if (input.isEmpty()) continue;
+
+            String[] args = input.split("\\s+");
+
+            Command command = commandManager.getCommand(args[0]);
+            args = Arrays.copyOfRange(args, 1, args.length);
+            if (command != null) {
+                try {
+                    command.execute(args);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            } else {
+                System.out.println("Unknown command. Type 'help' for available commands");
+            }
+        }
     }
 }
