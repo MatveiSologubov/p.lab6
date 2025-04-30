@@ -18,7 +18,7 @@ public final class Client {
 
     private Client() {
         commandManager.addCommand("help", new Help(commandManager));
-//        commandManager.addCommand("info", new Info(collectionManager));
+        commandManager.addCommand("info", new Info(updClient));
         commandManager.addCommand("show", new Show(updClient));
 //        commandManager.addCommand("add", new Add(collectionManager, scannerManager));
 //        commandManager.addCommand("update", new Update(collectionManager, scannerManager));
