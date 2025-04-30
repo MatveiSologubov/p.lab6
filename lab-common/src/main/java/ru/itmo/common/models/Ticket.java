@@ -1,8 +1,9 @@
 package ru.itmo.common.models;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 
-public class Ticket implements Comparable<Ticket>, Validatable {
+public class Ticket implements Comparable<Ticket>, Validatable, Serializable {
     private static long idCounter = 1; // Значение поля должно быть больше 0, Значение этого поля должно быть
     // уникальным, Значение этого поля должно генерироваться автоматически
     private long id;
@@ -143,6 +144,7 @@ public class Ticket implements Comparable<Ticket>, Validatable {
 
     /**
      * Validates Ticket
+     *
      * @return returns true if all fields in Ticket are valid
      */
     @Override

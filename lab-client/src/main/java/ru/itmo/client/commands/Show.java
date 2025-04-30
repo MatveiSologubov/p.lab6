@@ -25,6 +25,11 @@ public class Show extends Command {
 
         ShowResponse response = (ShowResponse) client.sendAndReceive(new ShowRequest(args));
 
+
+        if (response.getTickets() == null || response.getTickets().isEmpty()) {
+            System.out.println("Collection is empty");
+        }
+
         for (Ticket ticket : response.getTickets()) {
             System.out.println(ticket);
         }

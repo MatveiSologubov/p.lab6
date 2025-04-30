@@ -1,6 +1,8 @@
 package ru.itmo.common.models;
 
-public class Coordinates implements Validatable {
+import java.io.Serializable;
+
+public class Coordinates implements Validatable, Serializable {
     private Integer x; // Максимальное значение поля: 793, Поле не может быть null
     private Float y; // Значение поля должно быть больше -429, Поле не может быть null
 
@@ -39,6 +41,7 @@ public class Coordinates implements Validatable {
 
     /**
      * Validates Coordinates
+     *
      * @return returns true if Coordinates are valid
      */
     @Override

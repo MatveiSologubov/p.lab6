@@ -1,8 +1,9 @@
 package ru.itmo.common.models;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class Person implements Validatable {
+public class Person implements Validatable, Serializable {
     private LocalDateTime birthday; // Поле может быть null
     private Integer height; // Поле не может быть null, Значение поля должно быть больше 0
     private float weight; // Значение поля должно быть больше 0
@@ -62,6 +63,7 @@ public class Person implements Validatable {
 
     /**
      * Validates Person
+     *
      * @return returns true if all fields in Person are valid
      */
     @Override

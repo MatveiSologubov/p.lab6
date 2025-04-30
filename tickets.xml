@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<tickets>
+  <ticket id="1">
+    <name>TEST</name>
+    <coordinates>
+      <x>123</x>
+      <y>123.0</y>
+    </coordinates>
+    <creationDate>2025-04-05T21:05:16.154542616+03:00[Europe/Moscow]</creationDate>
+    <refundable>false</refundable>
+    <person>
+      <height>123</height>
+      <weight>123.0</weight>
+    </person>
+  </ticket>
+  <ticket id="2">
+    <name>Concert Ticket</name>
+    <coordinates>
+      <x>500</x>
+      <y>100.5</y>
+    </coordinates>
+    <creationDate>2023-10-20T15:30:45Z</creationDate>
+    <price>99.99</price>
+    <refundable>true</refundable>
+    <type>VIP</type>
+    <person>
+      <birthday>2000-05-15T00:00</birthday>
+      <height>175</height>
+      <weight>70.5</weight>
+      <passportID>AB123456</passportID>
+    </person>
+  </ticket>
+  <ticket id="3">
+    <name>Test</name>
+    <coordinates>
+      <x>12</x>
+      <y>12.3</y>
+    </coordinates>
+    <creationDate>2025-03-13T09:24:14.531470592+03:00[Europe/Moscow]</creationDate>
+    <price>12.3</price>
+    <refundable>true</refundable>
+    <type>USUAL</type>
+    <person>
+      <birthday>2025-03-13T09:24:14.531428612</birthday>
+      <height>12</height>
+      <weight>12.3</weight>
+      <passportID>ABED</passportID>
+    </person>
+  </ticket>
+  <ticket id="4">
+    <name>Test</name>
+    <coordinates>
+      <x>12</x>
+      <y>12.3</y>
+    </coordinates>
+    <creationDate>2025-03-13T15:31:41.411266508+03:00[Europe/Moscow]</creationDate>
+    <price>12.3</price>
+    <refundable>true</refundable>
+    <type>USUAL</type>
+    <person>
+      <birthday>2025-03-13T15:31:41.411232808</birthday>
+      <height>12</height>
+      <weight>12.3</weight>
+      <passportID>ABED</passportID>
+    </person>
+  </ticket>
+  <ticket id="-120">
+    <name>Test</name>
+    <coordinates>
+      <x>12</x>
+      <y>12.3</y>
+    </coordinates>
+    <creationDate>2025-03-13T09:58:36.432781728+03:00[Europe/Moscow]</creationDate>
+    <price>12.3</price>
+    <refundable>true</refundable>
+    <type>USUAL</type>
+    <person>
+      <birthday>2025-03-13T09:58:36.432732438</birthday>
+      <height>12</height>
+      <weight>12.3</weight>
+      <passportID>ABED</passportID>
+    </person>
+  </ticket>
+  <ticket id="1">
+    <name>Test</name>
+    <coordinates>
+      <x>12</x>
+      <y>12.3</y>
+    </coordinates>
+    <creationDate>2025-03-12T21:31:25.374759518+03:00[Europe/Moscow]</creationDate>
+    <price>12.3</price>
+    <refundable>true</refundable>
+    <type>USUAL</type>
+    <person>
+      <birthday>2025-03-12T21:31:25.374700698</birthday>
+      <height>12</height>
+      <weight>12.3</weight>
+      <passportID>ABED</passportID>
+    </person>
+  </ticket>
+  <ticket id="2">
+    <name>Museum Ticket</name>
+    <coordinates>
+      <x>1500</x>
+      <y>120.3</y>
+    </coordinates>
+    <creationDate>2024-11-20T15:30:45Z</creationDate>
+    <price>9.99</price>
+    <refundable>false</refundable>
+    <type>CHEAP</type>
+    <person>
+      <birthday>2000-05-15T00:00</birthday>
+      <height>175</height>
+      <weight>70.5</weight>
+      <passportID>AB123456</passportID>
+    </person>
+  </ticket>
+</tickets>
