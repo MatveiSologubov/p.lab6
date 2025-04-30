@@ -1,7 +1,6 @@
 package ru.itmo.server.commands;
 
 
-import ru.itmo.common.exceptions.WrongAmountOfArgumentsException;
 import ru.itmo.common.network.requests.Request;
 import ru.itmo.common.network.responses.ClearResponse;
 import ru.itmo.common.network.responses.Response;
@@ -21,11 +20,7 @@ public class Clear extends Command {
      * execute command
      */
     @Override
-    public Response execute(Request request) throws WrongAmountOfArgumentsException {
-        if (request.arguments().length != 0) {
-            throw new WrongAmountOfArgumentsException(0, request.arguments().length);
-        }
-
+    public Response execute(Request request) {
         collectionManager.clearCollection();
 
         return new ClearResponse();

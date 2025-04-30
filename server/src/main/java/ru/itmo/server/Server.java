@@ -1,6 +1,5 @@
 package ru.itmo.server;
 
-import ru.itmo.common.exceptions.WrongAmountOfArgumentsException;
 import ru.itmo.common.network.requests.Request;
 import ru.itmo.common.network.responses.NullResponse;
 import ru.itmo.common.network.responses.Response;
@@ -63,11 +62,7 @@ public final class Server {
                 continue;
             }
 
-            try {
-                sendData(command.execute(request), packet.getAddress(), packet.getPort());
-            } catch (WrongAmountOfArgumentsException e) {
-                System.out.println(e.getMessage());
-            }
+            sendData(command.execute(request), packet.getAddress(), packet.getPort());
         }
     }
 

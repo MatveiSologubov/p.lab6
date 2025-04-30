@@ -23,7 +23,7 @@ public class Show extends Command {
     public void execute(String[] args) throws WrongAmountOfArgumentsException {
         if (args.length != 0) throw new WrongAmountOfArgumentsException(0, args.length);
 
-        ShowResponse response = (ShowResponse) client.sendAndReceive(new ShowRequest(args));
+        ShowResponse response = (ShowResponse) client.sendAndReceive(new ShowRequest());
 
 
         if (response.getTickets() == null || response.getTickets().isEmpty()) {
