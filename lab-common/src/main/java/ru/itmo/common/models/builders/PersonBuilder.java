@@ -20,6 +20,7 @@ public class PersonBuilder extends Builder<Person> {
 
     /**
      * Builds Person
+     *
      * @return Person that was built
      */
     @Override

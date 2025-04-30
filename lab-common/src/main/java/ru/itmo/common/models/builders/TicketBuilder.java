@@ -22,6 +22,7 @@ public class TicketBuilder extends Builder<Ticket> {
 
     /**
      * Builds Ticket
+     *
      * @return Ticket that was built
      */
     @Override
