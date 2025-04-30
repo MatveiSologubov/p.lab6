@@ -4,7 +4,7 @@
             <env name="COLLECTION_FILE" value="tickets.xml"/>
         </envs>
         <option name="MAIN_CLASS_NAME" value="ru.itmo.server.Server"/>
-        <module name="lab-server"/>
+        <module name="server"/>
         <extension name="coverage">
             <pattern>
                 <option name="PATTERN" value="ru.itmo.server.*"/>

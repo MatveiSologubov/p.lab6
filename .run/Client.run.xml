@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
     <configuration default="false" name="Client" type="Application" factoryName="Application" nameIsGenerated="true">
         <option name="MAIN_CLASS_NAME" value="ru.itmo.client.Client"/>
-        <module name="lab-client"/>
+        <module name="client"/>
         <extension name="coverage">
             <pattern>
                 <option name="PATTERN" value="ru.itmo.client.*"/>
