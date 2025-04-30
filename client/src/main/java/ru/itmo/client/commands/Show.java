@@ -40,6 +40,6 @@ public class Show extends Command {
      */
     @Override
     public String getHelp() {
-        return "";
+        return "This command will show current collection";
     }
 }
