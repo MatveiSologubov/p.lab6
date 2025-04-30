@@ -61,8 +61,8 @@
         </pluginManagement>
     </build>
     <modules>
-        <module>lab-common</module>
-        <module>lab-client</module>
-        <module>lab-server</module>
+        <module>common</module>
+        <module>client</module>
+        <module>server</module>
     </modules>
 </project>

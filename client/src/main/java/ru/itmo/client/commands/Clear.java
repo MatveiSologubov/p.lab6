@@ -22,6 +22,7 @@ public class Clear extends Command {
         if (args.length != 0) throw new WrongAmountOfArgumentsException(0, args.length);
 
         client.sendAndReceive(new ClearRequest(args));
+        System.out.println("Collection is cleared");
     }
 
     /**

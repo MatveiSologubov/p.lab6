@@ -144,8 +144,8 @@ replay_pid*
 
 #Archetype
 /target/
-/lab-client/target/
-/lab-common/target/
-/lab-server/target/
+/client/target/
+/common/target/
+/server/target/
 *.iml
 .idea
