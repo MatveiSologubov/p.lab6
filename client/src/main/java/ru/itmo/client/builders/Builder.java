@@ -1,4 +1,4 @@
-package ru.itmo.common.models.builders;
+package ru.itmo.client.builders;
 
 public abstract class Builder<T> {
     public abstract T build();

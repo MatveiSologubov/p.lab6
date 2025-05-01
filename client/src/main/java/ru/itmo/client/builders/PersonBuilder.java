@@ -1,4 +1,4 @@
-package ru.itmo.common.models.builders;
+package ru.itmo.client.builders;
 
 import ru.itmo.common.exceptions.FieldMustNotBeEmpty;
 import ru.itmo.common.models.Person;

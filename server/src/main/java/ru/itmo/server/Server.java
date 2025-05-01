@@ -4,10 +4,7 @@ import ru.itmo.common.network.requests.Request;
 import ru.itmo.common.network.responses.NullResponse;
 import ru.itmo.common.network.responses.Response;
 import ru.itmo.common.util.Serializer;
-import ru.itmo.server.commands.Clear;
-import ru.itmo.server.commands.Command;
-import ru.itmo.server.commands.Info;
-import ru.itmo.server.commands.Show;
+import ru.itmo.server.commands.*;
 import ru.itmo.server.managers.CollectionManager;
 import ru.itmo.server.managers.CommandManager;
 import ru.itmo.server.managers.FileManager;
@@ -46,6 +43,7 @@ public final class Server {
         commandManager.addCommand("info", new Info(collectionManager));
         commandManager.addCommand("show", new Show(collectionManager));
         commandManager.addCommand("clear", new Clear(collectionManager));
+        commandManager.addCommand("add", new Add(collectionManager));
     }
 
     public static void main(String[] args) {

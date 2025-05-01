@@ -2,6 +2,7 @@ package ru.itmo.client;
 
 import ru.itmo.client.commands.*;
 import ru.itmo.client.managers.CommandManager;
+import ru.itmo.client.managers.ScannerManager;
 import ru.itmo.client.network.UPDClient;
 
 import java.util.Arrays;
@@ -11,16 +12,19 @@ public final class Client {
     final int PORT = 1234;
     final int BUFFER_SIZE = 2048;
     final String HOST = "127.0.0.1";
+
     final CommandManager commandManager = new CommandManager();
     final Scanner scanner = new Scanner(System.in);
+    final ScannerManager scannerManager = new ScannerManager(scanner);
     final UPDClient updClient = new UPDClient(HOST, PORT, BUFFER_SIZE);
+
     boolean running = true;
 
     private Client() {
         commandManager.addCommand("help", new Help(commandManager));
         commandManager.addCommand("info", new Info(updClient));
         commandManager.addCommand("show", new Show(updClient));
-//        commandManager.addCommand("add", new Add(collectionManager, scannerManager));
+        commandManager.addCommand("add", new Add(updClient, scannerManager));
 //        commandManager.addCommand("update", new Update(collectionManager, scannerManager));
 //        commandManager.addCommand("remove_by_id", new RemoveById(collectionManager));
         commandManager.addCommand("clear", new Clear(updClient));
