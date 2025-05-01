@@ -47,6 +47,7 @@ public final class Server {
         commandManager.addCommand("update", new Update(collectionManager));
         commandManager.addCommand("remove_by_id", new RemoveById(collectionManager));
         commandManager.addCommand("add_if_max", new AddIfMax(collectionManager));
+        commandManager.addCommand("add_if_min", new AddIfMin(collectionManager));
         commandManager.addCommand("remove_greater", new RemoveGreater(collectionManager));
     }
 
