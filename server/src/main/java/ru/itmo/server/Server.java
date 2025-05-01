@@ -45,6 +45,7 @@ public final class Server {
         commandManager.addCommand("clear", new Clear(collectionManager));
         commandManager.addCommand("add", new Add(collectionManager));
         commandManager.addCommand("update", new Update(collectionManager));
+        commandManager.addCommand("remove_by_id", new RemoveById(collectionManager));
     }
 
     public static void main(String[] args) {
