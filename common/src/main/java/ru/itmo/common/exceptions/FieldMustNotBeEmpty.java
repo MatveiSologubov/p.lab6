@@ -5,6 +5,6 @@ package ru.itmo.common.exceptions;
  */
 public class FieldMustNotBeEmpty extends Exception {
     public FieldMustNotBeEmpty(String message) {
-        super("ERROR: " + message + "must not be empty");
+        super("ERROR: " + message + " must not be empty");
     }
 }
