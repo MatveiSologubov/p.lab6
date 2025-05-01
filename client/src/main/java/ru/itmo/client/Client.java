@@ -25,7 +25,7 @@ public final class Client {
         commandManager.addCommand("info", new Info(updClient));
         commandManager.addCommand("show", new Show(updClient));
         commandManager.addCommand("add", new Add(updClient, scannerManager));
-//        commandManager.addCommand("update", new Update(collectionManager, scannerManager));
+        commandManager.addCommand("update", new Update(updClient, scannerManager));
 //        commandManager.addCommand("remove_by_id", new RemoveById(collectionManager));
         commandManager.addCommand("clear", new Clear(updClient));
 //        commandManager.addCommand("execute_script", new ExecuteScript(commandManager, scannerManager));

@@ -44,6 +44,7 @@ public final class Server {
         commandManager.addCommand("show", new Show(collectionManager));
         commandManager.addCommand("clear", new Clear(collectionManager));
         commandManager.addCommand("add", new Add(collectionManager));
+        commandManager.addCommand("update", new Update(collectionManager));
     }
 
     public static void main(String[] args) {
