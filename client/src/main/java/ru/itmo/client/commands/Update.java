@@ -30,7 +30,14 @@ public class Update extends NetworkCommand {
     public void execute(String[] args) throws WrongAmountOfArgumentsException {
         if (args.length != 1) throw new WrongAmountOfArgumentsException(1, args.length);
 
-        int id = Integer.parseInt(args[0]);
+        int id;
+        try {
+            id = Integer.parseInt(args[0]);
+        } catch (NumberFormatException e) {
+            System.out.println("Error: ID must be an integer.");
+            return;
+        }
+
         TicketBuilder builder = new TicketBuilder(scannerManager.getScanner());
         Ticket ticket = builder.build();
 
