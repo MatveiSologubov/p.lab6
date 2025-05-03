@@ -10,26 +10,41 @@ import ru.itmo.server.managers.CommandManager;
 import ru.itmo.server.managers.FileManager;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.DatagramChannel;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Set;
 
 public final class Server {
     static final int PORT = 1234;
     static final int PACKET_SIZE = 2048;
+
     static final CommandManager commandManager = new CommandManager();
     static final CollectionManager collectionManager = new CollectionManager();
     static final FileManager fileManager = new FileManager();
     static String filePath;
-    DatagramSocket socket;
+
+    private DatagramChannel channel;
+    private Selector selector;
 
     private Server() {
         try {
-            socket = new DatagramSocket(PORT);
-        } catch (SocketException e) {
-            throw new RuntimeException(e);
+            channel = DatagramChannel.open();
+            InetAddress address = InetAddress.getByName("0.0.0.0");
+            channel.bind(new InetSocketAddress(address, PORT));
+            System.out.println("Address: " + address);
+            channel.configureBlocking(false);
+
+            selector = Selector.open();
+            channel.register(selector, SelectionKey.OP_READ);
+        } catch (IOException e) {
+            System.out.println("Error initializing server: " + e.getMessage());
         }
 
         filePath = System.getenv("COLLECTION_FILE");
@@ -56,41 +71,62 @@ public final class Server {
     }
 
     public void start() {
+        System.out.println("Server started on port " + PORT);
+        ByteBuffer buffer = ByteBuffer.allocate(PACKET_SIZE);
+
         while (true) {
-            DatagramPacket packet = receive();
-            byte[] trimmedData = Arrays.copyOf(packet.getData(), packet.getLength());
+            try {
+                selector.select();
+                Set<SelectionKey> selectionKeys = selector.selectedKeys();
+                Iterator<SelectionKey> iterator = selectionKeys.iterator();
+                while (iterator.hasNext()) {
+                    SelectionKey key = iterator.next();
+                    iterator.remove();
+
+                    if (!key.isReadable()) continue;
+
+                    buffer.clear();
+                    SocketAddress clientAddress = channel.receive(buffer);
+                    System.out.println("Client " + clientAddress + " received");
+
+                    if (clientAddress == null) continue;
+
+                    handleRequest(buffer, clientAddress);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private void handleRequest(ByteBuffer buffer, SocketAddress clientAddress) {
+        try {
+            buffer.flip();
+            byte[] trimmedData = Arrays.copyOf(buffer.array(), buffer.limit());
+
             Request request = (Request) Serializer.deserialize(trimmedData);
             Command command = commandManager.getCommand(request.name());
 
-            if (command == null) {
-                sendData(new NullResponse(), packet.getAddress(), packet.getPort());
-                continue;
+
+            Response response = new NullResponse();
+            if (command != null) {
+                response = command.execute(request);
             }
 
-            sendData(command.execute(request), packet.getAddress(), packet.getPort());
-        }
-    }
-
-    public DatagramPacket receive() {
-        byte[] buffer = new byte[PACKET_SIZE];
-        DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-        try {
-            socket.receive(packet);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            sendResponse(response, clientAddress);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
         }
 
-        return packet;
     }
 
-    public void sendData(Response response, InetAddress host, int port) {
-        byte[] arr = Serializer.serialize(response);
-
-        DatagramPacket packet = new DatagramPacket(arr, arr.length, host, port);
+    private void sendResponse(Response response, SocketAddress clientAddress) {
         try {
-            socket.send(packet);
+            byte[] data = Serializer.serialize(response);
+            ByteBuffer buffer = ByteBuffer.wrap(data);
+            channel.send(buffer, clientAddress);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("Error sending response: " + e.getMessage());
         }
     }
 }
