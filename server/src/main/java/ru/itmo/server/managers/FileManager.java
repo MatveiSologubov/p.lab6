@@ -1,5 +1,7 @@
 package ru.itmo.server.managers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ru.itmo.common.models.Coordinates;
 import ru.itmo.common.models.Person;
 import ru.itmo.common.models.Ticket;
@@ -17,6 +19,7 @@ import java.util.Set;
  * Class that saves and loads Tickets from file
  */
 public class FileManager {
+    private static final Logger logger = LogManager.getLogger(FileManager.class);
     private XMLStreamWriter writer;
     private int indentLevel = 0;
 
@@ -33,7 +36,7 @@ public class FileManager {
             writeXmlContent(collection);
             writer.close();
         } catch (XMLStreamException | IOException e) {
-            System.out.println("Error saving file: " + e.getMessage());
+            logger.error("Error saving collection to file: {}", filePath, e);
         } finally {
             this.writer = null;
         }
@@ -169,7 +172,7 @@ public class FileManager {
             XMLStreamReader reader = factory.createXMLStreamReader(stream);
             return new XmlParser().parse(reader);
         } catch (XMLStreamException | IOException e) {
-            System.out.println("Error loading file: " + e.getMessage());
+            logger.error("Error loading collection from file: {}", filePath, e);
             return new HashSet<>();
         }
     }
@@ -201,9 +204,9 @@ public class FileManager {
                         case XMLStreamConstants.END_ELEMENT -> handleEndElement(reader);
                     }
                 } catch (DateTimeParseException e) {
-                    System.out.println("Error parsing date: " + e.getMessage());
+                    logger.warn("Error parsing date: Line number = {}", reader.getLocation().getLineNumber());
                 } catch (Exception e) {
-                    System.out.println("Error parsing element: " + e.getMessage());
+                    logger.error("XML parsing error: Line number = {}", reader.getLocation().getLineNumber(), e);
                 }
             }
             return collection;
@@ -273,7 +276,7 @@ public class FileManager {
             try {
                 currentTicket.setId(Long.parseLong(reader.getAttributeValue(null, "id")));
             } catch (NumberFormatException e) {
-                System.out.println("Invalid ticket id");
+                logger.warn("Invalid ticket ID format: {}", reader.getAttributeValue(null, "id"));
             }
         }
 
@@ -282,7 +285,7 @@ public class FileManager {
          */
         private void completeTicket() {
             if (currentTicket.validate()) collection.add(currentTicket);
-            else System.out.println("Invalid ticket in file");
+            else logger.warn("Invalid ticket detected and skipped");
             currentTicket = null;
         }
 

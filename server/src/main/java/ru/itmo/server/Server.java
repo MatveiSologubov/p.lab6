@@ -1,5 +1,7 @@
 package ru.itmo.server;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ru.itmo.common.network.requests.Request;
 import ru.itmo.common.network.responses.NullResponse;
 import ru.itmo.common.network.responses.Response;
@@ -28,23 +30,25 @@ public final class Server {
     static final CommandManager commandManager = new CommandManager();
     static final CollectionManager collectionManager = new CollectionManager();
     static final FileManager fileManager = new FileManager();
+    private final static Logger logger = LogManager.getLogger(Server.class);
     static String filePath;
-
     private DatagramChannel channel;
     private Selector selector;
 
     private Server() {
         try {
+            logger.info("Initializing server");
             channel = DatagramChannel.open();
             InetAddress address = InetAddress.getByName("0.0.0.0");
             channel.bind(new InetSocketAddress(address, PORT));
-            System.out.println("Address: " + address);
             channel.configureBlocking(false);
 
             selector = Selector.open();
             channel.register(selector, SelectionKey.OP_READ);
+            logger.info("Server started on address {} and port {}", address, PORT);
         } catch (IOException e) {
-            System.out.println("Error initializing server: " + e.getMessage());
+            logger.error("Server initialization failed", e);
+            System.exit(1);
         }
 
         filePath = System.getenv("COLLECTION_FILE");
@@ -71,32 +75,45 @@ public final class Server {
     }
 
     public void start() {
-        System.out.println("Server started on port " + PORT);
+        logger.info("Starting sever main loop");
         ByteBuffer buffer = ByteBuffer.allocate(PACKET_SIZE);
 
         while (true) {
             try {
                 selector.select();
-                Set<SelectionKey> selectionKeys = selector.selectedKeys();
-                Iterator<SelectionKey> iterator = selectionKeys.iterator();
-                while (iterator.hasNext()) {
-                    SelectionKey key = iterator.next();
-                    iterator.remove();
-
-                    if (!key.isReadable()) continue;
-
-                    buffer.clear();
-                    SocketAddress clientAddress = channel.receive(buffer);
-                    System.out.println("Client " + clientAddress + " received");
-
-                    if (clientAddress == null) continue;
-
-                    handleRequest(buffer, clientAddress);
-                }
+                processSelectedKeys(buffer);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                logger.error("Critical sever error", e);
             }
         }
+    }
+
+    private void processSelectedKeys(ByteBuffer buffer) throws IOException {
+        Set<SelectionKey> selectionKeys = selector.selectedKeys();
+        Iterator<SelectionKey> iterator = selectionKeys.iterator();
+        while (iterator.hasNext()) {
+            SelectionKey key = iterator.next();
+            iterator.remove();
+
+            if (!key.isValid()) {
+                logger.warn("Invalid selection key {}", key);
+                continue;
+            }
+
+            if (!key.isReadable()) continue;
+
+            processReadableKey(buffer);
+        }
+    }
+
+    private void processReadableKey(ByteBuffer buffer) throws IOException {
+        buffer.clear();
+        SocketAddress clientAddress = channel.receive(buffer);
+
+        if (clientAddress == null) return;
+
+        logger.debug("Received request from {}", clientAddress);
+        handleRequest(buffer, clientAddress);
     }
 
     private void handleRequest(ByteBuffer buffer, SocketAddress clientAddress) {
@@ -105,9 +122,9 @@ public final class Server {
             byte[] trimmedData = Arrays.copyOf(buffer.array(), buffer.limit());
 
             Request request = (Request) Serializer.deserialize(trimmedData);
+            logger.info("Processing command '{}' from {}", request.name(), clientAddress);
+
             Command command = commandManager.getCommand(request.name());
-
-
             Response response = new NullResponse();
             if (command != null) {
                 response = command.execute(request);
@@ -115,9 +132,8 @@ public final class Server {
 
             sendResponse(response, clientAddress);
         } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+            logger.error("Request processing error", e);
         }
-
     }
 
     private void sendResponse(Response response, SocketAddress clientAddress) {
@@ -125,8 +141,9 @@ public final class Server {
             byte[] data = Serializer.serialize(response);
             ByteBuffer buffer = ByteBuffer.wrap(data);
             channel.send(buffer, clientAddress);
+            logger.debug("Response sent to {}", clientAddress);
         } catch (IOException e) {
-            System.out.println("Error sending response: " + e.getMessage());
+            logger.warn("Failed to send response to {}", clientAddress, e);
         }
     }
 }
