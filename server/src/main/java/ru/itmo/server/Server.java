@@ -10,6 +10,7 @@ import ru.itmo.server.commands.*;
 import ru.itmo.server.managers.CollectionManager;
 import ru.itmo.server.managers.CommandManager;
 import ru.itmo.server.managers.FileManager;
+import ru.itmo.server.managers.LogModeManager;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -37,6 +38,7 @@ public final class Server {
     private Selector selector;
 
     private volatile boolean running = true;
+    private volatile boolean commandMode = false;
 
     private Server() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -90,10 +92,13 @@ public final class Server {
         ByteBuffer buffer = ByteBuffer.allocate(PACKET_SIZE);
 
         try {
-        while (running) {
-                selector.select();
+            while (running) {
+                if (selector.select(100) == 0) {
+                    if (!running) break;
+                    continue;
+                }
                 processSelectedKeys(buffer);
-        }
+            }
         } catch (IOException e) {
             logger.error("Critical sever error", e);
         } finally {
@@ -128,25 +133,55 @@ public final class Server {
     }
 
     private void readConsoleCommands() {
-       try (Scanner scanner = new Scanner(System.in)) {
-           while (running) {
-               if (scanner.hasNextLine()) {
-                   String command = scanner.nextLine();
-                   handleServerCommands(command);
-               }
-           }
-       }
+        try (Scanner scanner = new Scanner(System.in)) {
+            System.out.println("Press Enter to enter command mode...");
+
+            while (running) {
+                // Ожидание первого Enter
+                scanner.nextLine();
+
+                // Переход в режим команд
+                enterCommandMode();
+
+                // Основной цикл ввода команд
+                while (commandMode && running) {
+                    System.out.print("server> ");
+                    if (scanner.hasNextLine()) {
+                        String command = scanner.nextLine().trim();
+                        handleServerCommands(command);
+                    }
+                }
+            }
+        }
+    }
+
+    private void enterCommandMode() {
+        LogModeManager.disableConsoleLogging();
+        commandMode = true;
+        System.out.println("[Command Mode]");
+        System.out.println("Available commands:");
+        System.out.println("  watch - Enable live logging");
+        System.out.println("  save  - Saves collection to file");
+        System.out.println("  exit  - Shutdown server");
     }
 
     private void handleServerCommands(String command) {
-        if (command.equals("save")) {
-            fileManager.save(collectionManager.getCollection(), filePath);
-            logger.info("Collection manually saved to {}", filePath);
-        } else if (command.equals("exit")) {
-            logger.info("Shutting down server due to command");
-           running = false;
-        } else{
-            System.out.println("Unknown command");
+        switch (command) {
+            case "save" -> {
+                fileManager.save(collectionManager.getCollection(), filePath);
+                logger.info("Collection manually saved to {}", filePath);
+            }
+            case "exit" -> {
+                logger.info("Shutting down server due to command");
+                running = false;
+                selector.wakeup();
+            }
+            case "watch" -> {
+                LogModeManager.enableConsoleLogging();
+                System.out.println("Live logging enabled");
+                commandMode = false;
+            }
+            default -> System.out.println("Unknown command");
         }
     }
 

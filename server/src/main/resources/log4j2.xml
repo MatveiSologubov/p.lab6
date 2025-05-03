@@ -22,15 +22,10 @@
     </Appenders>
 
     <Loggers>
-        <!-- Логгер для сервера -->
-        <Logger name="ru.itmo.server" level="debug" additivity="false">
-            <AppenderRef ref="Console"/>
-            <AppenderRef ref="File"/>
+        <Logger name="ru.itmo.server" level="ALL" additivity="false">
+            <AppenderRef ref="Console" level="ALL"/>
+            <AppenderRef ref="File" level="ALL"/>
         </Logger>
-
-        <!-- Корневой логгер -->
-        <Root level="error">
-            <AppenderRef ref="Console"/>
-        </Root>
+        <Root level="OFF"/>
     </Loggers>
 </Configuration>
