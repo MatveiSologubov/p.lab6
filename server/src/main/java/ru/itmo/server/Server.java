@@ -21,6 +21,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Scanner;
 import java.util.Set;
 
 public final class Server {
@@ -35,7 +36,14 @@ public final class Server {
     private DatagramChannel channel;
     private Selector selector;
 
+    private volatile boolean running = true;
+
     private Server() {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            logger.info("Shutdown hook triggered");
+            fileManager.save(collectionManager.getCollection(), filePath);
+        }));
+
         try {
             logger.info("Initializing server");
             channel = DatagramChannel.open();
@@ -76,15 +84,69 @@ public final class Server {
 
     public void start() {
         logger.info("Starting sever main loop");
+
+        new Thread(this::readConsoleCommands).start();
+
         ByteBuffer buffer = ByteBuffer.allocate(PACKET_SIZE);
 
-        while (true) {
-            try {
+        try {
+        while (running) {
                 selector.select();
                 processSelectedKeys(buffer);
-            } catch (IOException e) {
-                logger.error("Critical sever error", e);
+        }
+        } catch (IOException e) {
+            logger.error("Critical sever error", e);
+        } finally {
+            shutdown();
+        }
+    }
+
+    private void shutdown() {
+        logger.info("Starting server shutdown");
+
+        fileManager.save(collectionManager.getCollection(), filePath);
+
+        try {
+            if (channel != null && channel.isOpen()) {
+                channel.close();
+                logger.debug("DatagramChanel closed");
             }
+        } catch (IOException e) {
+            logger.error("Error closing channel", e);
+        }
+
+        try {
+            if (selector != null && selector.isOpen()) {
+                selector.close();
+                logger.debug("Selector closed");
+            }
+        } catch (IOException e) {
+            logger.error("Error closing selector", e);
+        }
+
+        logger.info("Server shutdown completed");
+    }
+
+    private void readConsoleCommands() {
+       try (Scanner scanner = new Scanner(System.in)) {
+           while (running) {
+               if (scanner.hasNextLine()) {
+                   String command = scanner.nextLine();
+                   handleServerCommands(command);
+               }
+           }
+       }
+    }
+
+    private void handleServerCommands(String command) {
+        if (command.equals("save")) {
+            fileManager.save(collectionManager.getCollection(), filePath);
+            logger.info("Collection manually saved to {}", filePath);
+        } else if (command.equals("exit")) {
+            logger.info("Shutting down server due to command");
+           running = false;
+        } else{
+            System.out.println("Unknown command");
         }
     }
 

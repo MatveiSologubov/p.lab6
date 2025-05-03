@@ -35,6 +35,7 @@ public class FileManager {
             this.writer = factory.createXMLStreamWriter(stream, "UTF-8");
             writeXmlContent(collection);
             writer.close();
+            logger.info("Collection saved to file '{}'", filePath);
         } catch (XMLStreamException | IOException e) {
             logger.error("Error saving collection to file: {}", filePath, e);
         } finally {
