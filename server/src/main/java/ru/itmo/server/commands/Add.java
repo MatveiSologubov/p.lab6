@@ -22,8 +22,7 @@ public class Add extends Command {
     @Override
     public Response execute(Request request) {
         AddRequest addRequest = (AddRequest) request;
-        Ticket ticket = new Ticket();
-        ticket.update(addRequest.getTicket());
+        Ticket ticket = new Ticket(addRequest.getTicket());
 
         collectionManager.add(ticket);
         return new AddResponse(true);

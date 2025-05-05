@@ -24,8 +24,7 @@ public class AddIfMin extends Command {
     @Override
     public Response execute(Request request) {
         AddIfMinRequest addRequest = (AddIfMinRequest) request;
-        Ticket ticket = new Ticket();
-        ticket.update(addRequest.getTicket());
+        Ticket ticket = new Ticket(addRequest.getTicket());
 
         if (collectionManager.getCollection().isEmpty()) {
             collectionManager.add(ticket);
