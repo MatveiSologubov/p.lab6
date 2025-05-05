@@ -41,7 +41,7 @@ public final class Client {
         commandManager.addCommand("add_if_max", new AddIfMax(updClient, scannerManager));
         commandManager.addCommand("add_if_min", new AddIfMin(updClient, scannerManager));
         commandManager.addCommand("remove_greater", new RemoveGreater(updClient, scannerManager));
-//        commandManager.addCommand("min_by_creation_date", new MinByCreationDate(collectionManager));
+        commandManager.addCommand("min_by_creation_date", new MinByCreationDate(updClient));
 //        commandManager.addCommand("filter_less_than_type", new FilterLessThanType(collectionManager));
 //        commandManager.addCommand("filter_greater_than_price", new FilterGreaterThanPrice(collectionManager));
     }
