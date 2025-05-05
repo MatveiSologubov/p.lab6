@@ -5,6 +5,8 @@ import ru.itmo.common.exceptions.WrongAmountOfArgumentsException;
 import ru.itmo.common.network.requests.RemoveByIdRequest;
 import ru.itmo.common.network.responses.RemoveByIdResponse;
 
+import java.io.IOException;
+
 /**
  * 'Remove By ID' command removes Ticket with specified id
  */
@@ -19,7 +21,7 @@ public class RemoveById extends NetworkCommand {
      * @param args id of ticket to be removed
      */
     @Override
-    public void execute(String[] args) throws WrongAmountOfArgumentsException {
+    public void execute(String[] args) throws WrongAmountOfArgumentsException, IOException {
         if (args.length != 1) throw new WrongAmountOfArgumentsException(1, args.length);
         int id;
         try {

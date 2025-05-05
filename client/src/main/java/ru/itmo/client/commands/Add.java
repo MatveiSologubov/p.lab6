@@ -8,6 +8,8 @@ import ru.itmo.common.models.Ticket;
 import ru.itmo.common.network.requests.AddRequest;
 import ru.itmo.common.network.responses.AddResponse;
 
+import java.io.IOException;
+
 /**
  * 'Add' commands builds and adds element to collection if its valid
  */
@@ -26,7 +28,7 @@ public class Add extends NetworkCommand {
      * @throws WrongAmountOfArgumentsException if user provides wrong amount of arguments
      */
     @Override
-    public void execute(String[] args) throws WrongAmountOfArgumentsException {
+    public void execute(String[] args) throws WrongAmountOfArgumentsException, IOException {
         if (args.length != 0) throw new WrongAmountOfArgumentsException(0, args.length);
 
         TicketBuilder builder = new TicketBuilder(scannerManager.getScanner());

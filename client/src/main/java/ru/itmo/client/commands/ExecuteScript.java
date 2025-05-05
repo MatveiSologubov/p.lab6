@@ -8,6 +8,7 @@ import ru.itmo.common.exceptions.WrongAmountOfArgumentsException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Scanner;
@@ -57,14 +58,20 @@ public class ExecuteScript extends Command {
 
                 Command command = commandManager.getCommand(commandName);
                 if (command != null) {
-                    command.execute(arguments);
+                    try {
+                        command.execute(arguments);
+                    } catch (IOException e) {
+                        System.out.println("Error connecting to server: " + e.getMessage());
+                    } catch (WrongAmountOfArgumentsException e) {
+                        System.out.println("Wrong amount of arguments: " + e.getMessage());
+                    }
                     continue;
                 }
                 System.out.println("Unknown command: " + commandName);
             }
         } catch (FileNotFoundException e) {
             System.out.println("Error: File not found");
-        } catch (ScriptRecursionException | WrongAmountOfArgumentsException e) {
+        } catch (ScriptRecursionException e) {
             System.out.println(e.getMessage());
         } finally {
             runningScripts.remove(filePath);

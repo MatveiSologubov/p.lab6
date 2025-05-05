@@ -4,6 +4,8 @@ import ru.itmo.client.network.UPDClient;
 import ru.itmo.common.exceptions.WrongAmountOfArgumentsException;
 import ru.itmo.common.network.requests.ClearRequest;
 
+import java.io.IOException;
+
 public class Clear extends NetworkCommand {
     public Clear(UPDClient client) {
         super(client);
@@ -16,7 +18,7 @@ public class Clear extends NetworkCommand {
      * @throws WrongAmountOfArgumentsException if user provides wrong amount of arguments
      */
     @Override
-    public void execute(String[] args) throws WrongAmountOfArgumentsException {
+    public void execute(String[] args) throws WrongAmountOfArgumentsException, IOException {
         if (args.length != 0) throw new WrongAmountOfArgumentsException(0, args.length);
 
         client.sendAndReceive(new ClearRequest(args));

@@ -5,6 +5,8 @@ import ru.itmo.common.exceptions.WrongAmountOfArgumentsException;
 import ru.itmo.common.network.requests.InfoRequest;
 import ru.itmo.common.network.responses.InfoResponse;
 
+import java.io.IOException;
+
 /**
  * 'Info' command print information about current collection
  */
@@ -20,7 +22,7 @@ public class Info extends NetworkCommand {
      * @throws WrongAmountOfArgumentsException if user provides wrong amount of arguments
      */
     @Override
-    public void execute(String[] args) throws WrongAmountOfArgumentsException {
+    public void execute(String[] args) throws WrongAmountOfArgumentsException, IOException {
         if (args.length != 0) throw new WrongAmountOfArgumentsException(0, args.length);
 
         InfoResponse response = (InfoResponse) client.sendAndReceive(new InfoRequest());

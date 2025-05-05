@@ -6,6 +6,8 @@ import ru.itmo.common.models.Ticket;
 import ru.itmo.common.network.requests.ShowRequest;
 import ru.itmo.common.network.responses.ShowResponse;
 
+import java.io.IOException;
+
 public class Show extends Command {
     final UPDClient client;
 
@@ -20,7 +22,7 @@ public class Show extends Command {
      * @throws WrongAmountOfArgumentsException if user provides wrong amount of arguments
      */
     @Override
-    public void execute(String[] args) throws WrongAmountOfArgumentsException {
+    public void execute(String[] args) throws WrongAmountOfArgumentsException, IOException {
         if (args.length != 0) throw new WrongAmountOfArgumentsException(0, args.length);
 
         ShowResponse response = (ShowResponse) client.sendAndReceive(new ShowRequest());

@@ -5,6 +5,7 @@ import ru.itmo.client.managers.CommandManager;
 import ru.itmo.client.managers.ScannerManager;
 import ru.itmo.client.network.UPDClient;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -16,11 +17,18 @@ public final class Client {
     final CommandManager commandManager = new CommandManager();
     final Scanner scanner = new Scanner(System.in);
     final ScannerManager scannerManager = new ScannerManager(scanner);
-    final UPDClient updClient = new UPDClient(HOST, PORT, BUFFER_SIZE);
+    private UPDClient updClient;
 
     boolean running = true;
 
     private Client() {
+        try {
+            updClient = new UPDClient(HOST, PORT, BUFFER_SIZE);
+        } catch (IOException e) {
+            System.out.println("Error initializing upd client");
+            System.exit(1);
+        }
+
         commandManager.addCommand("help", new Help(commandManager));
         commandManager.addCommand("info", new Info(updClient));
         commandManager.addCommand("show", new Show(updClient));

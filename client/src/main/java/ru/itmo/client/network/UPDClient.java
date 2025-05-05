@@ -10,32 +10,30 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 public class UPDClient {
-    private final String HOST;
     private final int PORT;
     private final int BUFFER_SIZE;
+    private final int TIMEOUT = 3000;
 
-    public UPDClient(String host, int port, int bufferSize) {
-        this.HOST = host;
+    private final DatagramSocket socket;
+    private final InetAddress serverAddress;
+
+    public UPDClient(String host, int port, int bufferSize) throws IOException {
+        this.socket = new DatagramSocket();
+        this.socket.setSoTimeout(TIMEOUT);
+        this.serverAddress = InetAddress.getByName(host);
         this.PORT = port;
         this.BUFFER_SIZE = bufferSize;
     }
 
-    public Response sendAndReceive(Request request) {
-        try (DatagramSocket socket = new DatagramSocket()) {
-            InetAddress host = InetAddress.getByName(HOST);
+    public Response sendAndReceive(Request request) throws IOException {
+        byte[] data = Serializer.serialize(request);
+        DatagramPacket packet = new DatagramPacket(data, data.length, serverAddress, PORT);
+        socket.send(packet);
 
-            byte[] data = Serializer.serialize(request);
-            DatagramPacket packet = new DatagramPacket(data, data.length, host, PORT);
-            socket.send(packet);
+        byte[] receive = new byte[BUFFER_SIZE];
+        packet = new DatagramPacket(receive, BUFFER_SIZE);
+        socket.receive(packet);
 
-            byte[] receive = new byte[BUFFER_SIZE];
-            packet = new DatagramPacket(receive, BUFFER_SIZE);
-            socket.receive(packet);
-
-            return (Response) Serializer.deserialize(receive);
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            return null;
-        }
+        return (Response) Serializer.deserialize(receive);
     }
 }

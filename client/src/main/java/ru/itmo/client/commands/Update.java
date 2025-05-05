@@ -8,6 +8,8 @@ import ru.itmo.common.models.Ticket;
 import ru.itmo.common.network.requests.UpdateRequest;
 import ru.itmo.common.network.responses.UpdateResponse;
 
+import java.io.IOException;
+
 /**
  * 'Update' command builds Ticket and the updates Ticket with specified id with data from new Ticket
  */
@@ -27,7 +29,7 @@ public class Update extends NetworkCommand {
      * @throws WrongAmountOfArgumentsException if user provides wrong amount of arguments
      */
     @Override
-    public void execute(String[] args) throws WrongAmountOfArgumentsException {
+    public void execute(String[] args) throws WrongAmountOfArgumentsException, IOException {
         if (args.length != 1) throw new WrongAmountOfArgumentsException(1, args.length);
 
         int id;
