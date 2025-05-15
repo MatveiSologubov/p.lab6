@@ -237,9 +237,25 @@ public final class Server {
     private void sendResponse(Response response, SocketAddress clientAddress) {
         try {
             byte[] data = Serializer.serialize(response);
-            ByteBuffer buffer = ByteBuffer.wrap(data);
-            channel.send(buffer, clientAddress);
-            logger.debug("Response sent to {}", clientAddress);
+            final int HEADER_SIZE = 8;
+            int chunkSize = PACKET_SIZE - HEADER_SIZE;
+            int totalNumberOfChunks = (int) Math.ceil((double) data.length / chunkSize);
+
+            for (int i = 0; i < totalNumberOfChunks; i++) {
+                int offset = i * chunkSize;
+                int chunkLength = Math.min(chunkSize, data.length - offset);
+                byte[] chunk = Arrays.copyOfRange(data, offset, offset + chunkLength);
+
+                ByteBuffer buffer = ByteBuffer.allocate(HEADER_SIZE + chunkLength);
+                buffer.putInt(totalNumberOfChunks);
+                buffer.putInt(i);
+                buffer.put(chunk);
+                buffer.flip();
+
+                channel.send(buffer, clientAddress);
+                logger.debug("Sent chunk {}/{} to {}", i + 1, totalNumberOfChunks, clientAddress);
+            }
+
         } catch (IOException e) {
             logger.warn("Failed to send response to {}", clientAddress, e);
         }
