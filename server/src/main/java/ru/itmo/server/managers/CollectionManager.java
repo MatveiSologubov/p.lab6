@@ -1,6 +1,8 @@
 package ru.itmo.server.managers;
 
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ru.itmo.common.exceptions.DuplicateIdException;
 import ru.itmo.common.models.Ticket;
 
@@ -15,6 +17,8 @@ public class CollectionManager {
     private final Set<Long> usedIds = new HashSet<>();
     private final LocalDateTime initTime;
     private final Set<Ticket> collection = new HashSet<>();
+
+    private final static Logger logger = LogManager.getLogger(CollectionManager.class);
 
     public CollectionManager() {
         this.initTime = LocalDateTime.now();
@@ -64,7 +68,7 @@ public class CollectionManager {
                 add(ticket);
                 maxId = Math.max(maxId, ticket.getId());
             } catch (DuplicateIdException e) {
-                System.out.println(e.getMessage());
+                logger.warn("Duplicate id detected: {}", e.getMessage());
             }
         }
         Ticket.setIdCounter(maxId + 1);
