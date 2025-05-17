@@ -80,6 +80,7 @@ public final class Server {
         commandManager.addCommand("remove_greater", new RemoveGreater(collectionManager));
         commandManager.addCommand("min_by_creation_date", new MinByCreationDate(collectionManager));
         commandManager.addCommand("filter_less_than_type", new FilterLessThanType(collectionManager));
+        commandManager.addCommand("filter_greater_than_price", new FilterGreaterThanPrice(collectionManager));
     }
 
     public static void main(String[] args) {

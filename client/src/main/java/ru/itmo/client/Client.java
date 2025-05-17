@@ -43,7 +43,7 @@ public final class Client {
         commandManager.addCommand("remove_greater", new RemoveGreater(updClient, scannerManager));
         commandManager.addCommand("min_by_creation_date", new MinByCreationDate(updClient));
         commandManager.addCommand("filter_less_than_type", new FilterLessThanType(updClient));
-//        commandManager.addCommand("filter_greater_than_price", new FilterGreaterThanPrice(collectionManager));
+        commandManager.addCommand("filter_greater_than_price", new FilterGreaterThanPrice(updClient));
     }
 
     public static void main(String[] args) {
