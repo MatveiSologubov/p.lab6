@@ -79,6 +79,7 @@ public final class Server {
         commandManager.addCommand("add_if_min", new AddIfMin(collectionManager));
         commandManager.addCommand("remove_greater", new RemoveGreater(collectionManager));
         commandManager.addCommand("min_by_creation_date", new MinByCreationDate(collectionManager));
+        commandManager.addCommand("filter_less_than_type", new FilterLessThanType(collectionManager));
     }
 
     public static void main(String[] args) {
