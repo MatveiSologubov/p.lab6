@@ -31,12 +31,12 @@ public class AddIfMax extends Command {
             return new AddIfMaxResponse(true, null);
         }
 
-        Ticket maxTicket = Collections.max(collectionManager.getCollection());
-        if (ticket.compareTo(maxTicket) > 0) {
+        float maxPrice = Collections.max(collectionManager.getCollection()).getPrice();
+        if (ticket.getPrice() > maxPrice) {
             collectionManager.add(ticket);
             return new AddIfMaxResponse(true, null);
         }
 
-        return new AddIfMaxResponse(false, "Ticket not added to collection. Current max price is " + maxTicket.getPrice());
+        return new AddIfMaxResponse(false, "Ticket not added to collection. Current max price is " + maxPrice);
     }
 }

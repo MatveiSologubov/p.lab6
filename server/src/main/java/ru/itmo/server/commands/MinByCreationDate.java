@@ -6,6 +6,8 @@ import ru.itmo.common.network.responses.MinByCreationDateResponse;
 import ru.itmo.common.network.responses.Response;
 import ru.itmo.server.managers.CollectionManager;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Set;
 
 public class MinByCreationDate extends Command {
@@ -27,12 +29,7 @@ public class MinByCreationDate extends Command {
             return new MinByCreationDateResponse(false, null, "Collection is empty");
         }
 
-        Ticket minTicket = collection.iterator().next();
-        for (Ticket t : collection) {
-            if (t.compareTo(minTicket) < 0) {
-                minTicket = t;
-            }
-        }
+        Ticket minTicket = Collections.min(collection, Comparator.comparing(Ticket::getCreationDate));
 
         return new MinByCreationDateResponse(true, minTicket, null);
     }

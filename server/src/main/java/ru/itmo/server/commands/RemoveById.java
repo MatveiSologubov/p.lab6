@@ -34,6 +34,16 @@ public class RemoveById extends Command {
                 return new RemoveByIdResponse(true, null);
             }
         }
-        return new RemoveByIdResponse(false, "Ticket with id " + removeByIdRequest.getId() + " was not found");
+
+        long idToRemove = removeByIdRequest.getId();
+        boolean removed = collectionManager.getCollection()
+                .removeIf(t -> t.getId() == idToRemove);
+
+        if (removed) {
+            return new RemoveByIdResponse(true, null);
+        }
+
+        String message = "Ticket with id " + idToRemove + " was not found";
+        return new RemoveByIdResponse(false, message);
     }
 }

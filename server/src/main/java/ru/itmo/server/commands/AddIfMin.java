@@ -28,15 +28,15 @@ public class AddIfMin extends Command {
 
         if (collectionManager.getCollection().isEmpty()) {
             collectionManager.add(ticket);
-            return new AddIfMinResponse(true, "Added Ticket with price " + ticket.getPrice() + " to collection");
+            return new AddIfMinResponse(true, null);
         }
 
-        Ticket minTicket = Collections.min(collectionManager.getCollection());
-        if (ticket.compareTo(minTicket) < 0) {
+        float minPrice = Collections.min(collectionManager.getCollection()).getPrice();
+        if (ticket.getPrice() < minPrice) {
             collectionManager.add(ticket);
             return new AddIfMinResponse(true, null);
         }
 
-        return new AddIfMinResponse(false, null);
+        return new AddIfMinResponse(false, "Ticket not added. Current min price is " + minPrice);
     }
 }
