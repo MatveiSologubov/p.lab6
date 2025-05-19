@@ -38,6 +38,11 @@ public class RemoveGreater extends NetworkCommand {
         RemoveGreaterResponse response;
         response = (RemoveGreaterResponse) client.sendAndReceive(request);
 
+        if (!response.isSuccess()) {
+            System.out.println("Something went wrong");
+            return;
+        }
+
         System.out.println(response.getMessage());
     }
 
