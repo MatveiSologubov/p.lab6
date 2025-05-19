@@ -7,22 +7,11 @@ import ru.itmo.common.network.responses.NullResponse;
 import ru.itmo.common.network.responses.Response;
 import ru.itmo.common.util.Serializer;
 import ru.itmo.server.commands.*;
-import ru.itmo.server.managers.CollectionManager;
-import ru.itmo.server.managers.CommandManager;
-import ru.itmo.server.managers.ConsoleManager;
-import ru.itmo.server.managers.FileManager;
+import ru.itmo.server.managers.*;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.DatagramChannel;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Set;
 
 public final class Server {
     private static final int PORT = 1234;
@@ -31,32 +20,18 @@ public final class Server {
     private static String filePath;
     private final CommandManager commandManager = new CommandManager();
     private final CollectionManager collectionManager = new CollectionManager();
+    private final NetworkManager networkManager;
     private final FileManager fileManager = new FileManager();
-    private DatagramChannel channel;
-    private Selector selector;
 
     private volatile boolean running = true;
 
-    private Server() {
+    private Server() throws IOException {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             logger.info("Shutdown hook triggered");
             fileManager.save(collectionManager.getCollection(), filePath);
         }));
 
-        try {
-            logger.info("Initializing server");
-            channel = DatagramChannel.open();
-            InetAddress address = InetAddress.getByName("0.0.0.0");
-            channel.bind(new InetSocketAddress(address, PORT));
-            channel.configureBlocking(false);
-
-            selector = Selector.open();
-            channel.register(selector, SelectionKey.OP_READ);
-            logger.info("Server started on address {} and port {}", address, PORT);
-        } catch (IOException e) {
-            logger.error("Server initialization failed", e);
-            System.exit(1);
-        }
+        logger.info("Initializing server");
 
         filePath = System.getenv("COLLECTION_FILE");
         if (filePath == null) {
@@ -64,8 +39,9 @@ public final class Server {
             System.exit(0);
         }
 
-
         collectionManager.setCollection(fileManager.load(filePath));
+
+        networkManager = new NetworkManager(PORT, PACKET_SIZE);
 
         ConsoleManager consoleManager = new ConsoleManager(this::stop, fileManager, collectionManager, filePath);
         new Thread(consoleManager).start();
@@ -85,93 +61,43 @@ public final class Server {
     }
 
     public static void main(String[] args) {
-        new Server().start();
+        try {
+            new Server().start();
+        } catch (IOException e) {
+            logger.error("Server initialization failed", e);
+            System.exit(1);
+        }
+    }
+
+    private void stop() {
+        running = false;
     }
 
     public void start() {
-        logger.info("Starting sever main loop");
-
-        ByteBuffer buffer = ByteBuffer.allocate(PACKET_SIZE);
-
+        logger.info("Starting server main loop");
         try {
             while (running) {
-                if (selector.select(100) == 0) {
+                NetworkManager.Received rec = networkManager.receive(100);
+                if (rec == null) {
                     if (!running) break;
                     continue;
                 }
-                processSelectedKeys(buffer);
+
+                handleRequest(rec.buffer, rec.clientAddress);
             }
-        } catch (IOException e) {
-            logger.error("Critical sever error", e);
+        } catch (Exception e) {
+            logger.error("Critical server error", e);
         } finally {
             shutdown();
         }
     }
 
-    public void stop() {
-        running = false;
-    }
-
-    private void shutdown() {
-        logger.info("Starting server shutdown");
-
-        fileManager.save(collectionManager.getCollection(), filePath);
-
-        try {
-            if (channel != null && channel.isOpen()) {
-                channel.close();
-                logger.debug("DatagramChanel closed");
-            }
-        } catch (IOException e) {
-            logger.error("Error closing channel", e);
-        }
-
-        try {
-            if (selector != null && selector.isOpen()) {
-                selector.close();
-                logger.debug("Selector closed");
-            }
-        } catch (IOException e) {
-            logger.error("Error closing selector", e);
-        }
-
-        logger.info("Server shutdown completed");
-    }
-
-    private void processSelectedKeys(ByteBuffer buffer) throws IOException {
-        Set<SelectionKey> selectionKeys = selector.selectedKeys();
-        Iterator<SelectionKey> iterator = selectionKeys.iterator();
-        while (iterator.hasNext()) {
-            SelectionKey key = iterator.next();
-            iterator.remove();
-
-            if (!key.isValid()) {
-                logger.warn("Invalid selection key {}", key);
-                continue;
-            }
-
-            if (!key.isReadable()) continue;
-
-            processReadableKey(buffer);
-        }
-    }
-
-    private void processReadableKey(ByteBuffer buffer) throws IOException {
-        buffer.clear();
-        SocketAddress clientAddress = channel.receive(buffer);
-
-        if (clientAddress == null) return;
-
-        logger.debug("Received request from {}", clientAddress);
-        handleRequest(buffer, clientAddress);
-    }
-
     private void handleRequest(ByteBuffer buffer, SocketAddress clientAddress) {
         try {
-            buffer.flip();
-            byte[] trimmedData = Arrays.copyOf(buffer.array(), buffer.limit());
+            byte[] data = new byte[buffer.limit()];
+            buffer.get(data);
 
-            Request request = (Request) Serializer.deserialize(trimmedData);
+            Request request = (Request) Serializer.deserialize(data);
             logger.info("Processing command '{}' from {}", request.name(), clientAddress);
 
             Command command = commandManager.getCommand(request.name());
@@ -190,26 +116,30 @@ public final class Server {
         try {
             byte[] data = Serializer.serialize(response);
             final int HEADER_SIZE = 8;
-            int chunkSize = PACKET_SIZE - HEADER_SIZE;
-            int totalNumberOfChunks = (int) Math.ceil((double) data.length / chunkSize);
+            final int CHUNK_SIZE = PACKET_SIZE - HEADER_SIZE;
+            int totalChunks = (int) Math.ceil((double) data.length / CHUNK_SIZE);
 
-            for (int i = 0; i < totalNumberOfChunks; i++) {
-                int offset = i * chunkSize;
-                int chunkLength = Math.min(chunkSize, data.length - offset);
-                byte[] chunk = Arrays.copyOfRange(data, offset, offset + chunkLength);
+            for (int i = 0; i < totalChunks; i++) {
+                int offset = i * CHUNK_SIZE;
+                int len = Math.min(CHUNK_SIZE, data.length - offset);
+                ByteBuffer buf = ByteBuffer.allocate(HEADER_SIZE + len);
+                buf.putInt(totalChunks);
+                buf.putInt(i);
+                buf.put(data, offset, len);
+                buf.flip();
 
-                ByteBuffer buffer = ByteBuffer.allocate(HEADER_SIZE + chunkLength);
-                buffer.putInt(totalNumberOfChunks);
-                buffer.putInt(i);
-                buffer.put(chunk);
-                buffer.flip();
-
-                channel.send(buffer, clientAddress);
-                logger.debug("Sent chunk {}/{} to {}", i + 1, totalNumberOfChunks, clientAddress);
+                networkManager.send(buf, clientAddress);
+                logger.debug("Sent chunk {}/{} to {}", i + 1, totalChunks, clientAddress);
             }
-
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.warn("Failed to send response to {}", clientAddress, e);
         }
+    }
+
+    private void shutdown() {
+        logger.info("Starting server shutdown");
+        fileManager.save(collectionManager.getCollection(), filePath);
+        networkManager.close();
+        logger.info("Server shutdown completed");
     }
 }
