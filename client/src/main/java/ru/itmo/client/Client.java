@@ -1,7 +1,7 @@
 package ru.itmo.client;
 
 import ru.itmo.client.commands.*;
-import ru.itmo.client.managers.CommandManager;
+import ru.itmo.client.managers.CommandRegistry;
 import ru.itmo.client.managers.ScannerManager;
 import ru.itmo.client.network.UPDClient;
 
@@ -14,7 +14,7 @@ public final class Client {
     final int BUFFER_SIZE = 2048;
     final String HOST = "127.0.0.1";
 
-    final CommandManager commandManager = new CommandManager();
+    final CommandRegistry commandRegistry;
     final Scanner scanner = new Scanner(System.in);
     final ScannerManager scannerManager = new ScannerManager(scanner);
     private UPDClient updClient;
@@ -29,21 +29,23 @@ public final class Client {
             System.exit(1);
         }
 
-        commandManager.addCommand("help", new Help(commandManager));
-        commandManager.addCommand("info", new Info(updClient));
-        commandManager.addCommand("show", new Show(updClient));
-        commandManager.addCommand("add", new Add(updClient, scannerManager));
-        commandManager.addCommand("update", new Update(updClient, scannerManager));
-        commandManager.addCommand("remove_by_id", new RemoveById(updClient));
-        commandManager.addCommand("clear", new Clear(updClient));
-        commandManager.addCommand("execute_script", new ExecuteScript(commandManager, scannerManager));
-        commandManager.addCommand("exit", new Exit(this::stop));
-        commandManager.addCommand("add_if_max", new AddIfMax(updClient, scannerManager));
-        commandManager.addCommand("add_if_min", new AddIfMin(updClient, scannerManager));
-        commandManager.addCommand("remove_greater", new RemoveGreater(updClient, scannerManager));
-        commandManager.addCommand("min_by_creation_date", new MinByCreationDate(updClient));
-        commandManager.addCommand("filter_less_than_type", new FilterLessThanType(updClient));
-        commandManager.addCommand("filter_greater_than_price", new FilterGreaterThanPrice(updClient));
+        commandRegistry = new CommandRegistry() {{
+            registerCommand("help", new Help(this));
+            registerCommand("info", new Info(updClient));
+            registerCommand("show", new Show(updClient));
+            registerCommand("add", new Add(updClient, scannerManager));
+            registerCommand("update", new Update(updClient, scannerManager));
+            registerCommand("remove_by_id", new RemoveById(updClient));
+            registerCommand("clear", new Clear(updClient));
+            registerCommand("execute_script", new ExecuteScript(this, scannerManager));
+            registerCommand("exit", new Exit(Client.this::stop));
+            registerCommand("add_if_max", new AddIfMax(updClient, scannerManager));
+            registerCommand("add_if_min", new AddIfMin(updClient, scannerManager));
+            registerCommand("remove_greater", new RemoveGreater(updClient, scannerManager));
+            registerCommand("min_by_creation_date", new MinByCreationDate(updClient));
+            registerCommand("filter_less_than_type", new FilterLessThanType(updClient));
+            registerCommand("filter_greater_than_price", new FilterGreaterThanPrice(updClient));
+        }};
     }
 
     public static void main(String[] args) {
@@ -65,7 +67,7 @@ public final class Client {
 
             String[] args = input.split("\\s+");
 
-            Command command = commandManager.getCommand(args[0]);
+            Command command = commandRegistry.getCommand(args[0]);
             args = Arrays.copyOfRange(args, 1, args.length);
             if (command != null) {
                 try {

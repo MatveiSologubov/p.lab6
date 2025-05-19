@@ -1,13 +1,13 @@
 package ru.itmo.client.commands;
 
-import ru.itmo.client.managers.CommandManager;
+import ru.itmo.client.managers.CommandRegistry;
 import ru.itmo.common.exceptions.WrongAmountOfArgumentsException;
 
 public class Help extends Command {
-    final CommandManager commandManager;
+    final CommandRegistry commandRegistry;
 
-    public Help(CommandManager commandManager) {
-        this.commandManager = commandManager;
+    public Help(CommandRegistry commandRegistry) {
+        this.commandRegistry = commandRegistry;
     }
 
     /**
@@ -21,7 +21,7 @@ public class Help extends Command {
         if (args.length != 0) throw new WrongAmountOfArgumentsException(0, args.length);
 
         System.out.println("Available commands:");
-        commandManager.getAllCommands().forEach((name, cmd) ->
+        commandRegistry.getAllCommands().forEach((name, cmd) ->
                 System.out.printf("  %-27s%s%n", name, cmd.getHelp()));
     }
 

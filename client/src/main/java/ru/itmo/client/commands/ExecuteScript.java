@@ -1,6 +1,6 @@
 package ru.itmo.client.commands;
 
-import ru.itmo.client.managers.CommandManager;
+import ru.itmo.client.managers.CommandRegistry;
 import ru.itmo.client.managers.ScannerManager;
 import ru.itmo.common.exceptions.ScriptRecursionException;
 import ru.itmo.common.exceptions.WrongAmountOfArgumentsException;
@@ -18,11 +18,11 @@ import java.util.Set;
  */
 public class ExecuteScript extends Command {
     private final static Set<String> runningScripts = new HashSet<>();
-    private final CommandManager commandManager;
+    private final CommandRegistry commandRegistry;
     private final ScannerManager scannerManager;
 
-    public ExecuteScript(CommandManager commandManager, ScannerManager scannerManager) {
-        this.commandManager = commandManager;
+    public ExecuteScript(CommandRegistry commandRegistry, ScannerManager scannerManager) {
+        this.commandRegistry = commandRegistry;
         this.scannerManager = scannerManager;
     }
 
@@ -55,7 +55,7 @@ public class ExecuteScript extends Command {
                 String commandName = parts[0];
                 String[] arguments = Arrays.copyOfRange(parts, 1, parts.length);
 
-                Command command = commandManager.getCommand(commandName);
+                Command command = commandRegistry.getCommand(commandName);
                 if (command != null) {
                     try {
                         command.execute(arguments);
