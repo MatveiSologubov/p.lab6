@@ -7,6 +7,7 @@ import ru.itmo.common.network.requests.ShowRequest;
 import ru.itmo.common.network.responses.ShowResponse;
 
 import java.io.IOException;
+import java.util.Comparator;
 
 public class Show extends Command {
     final UPDClient client;
@@ -32,9 +33,10 @@ public class Show extends Command {
             System.out.println("Collection is empty");
         }
 
-        for (Ticket ticket : response.getTickets()) {
-            System.out.println(ticket);
-        }
+        response.getTickets().stream()
+                .sorted(Comparator.comparing((Ticket t) -> t.getCoordinates().getX())
+                        .thenComparing(t -> t.getCoordinates().getY()))
+                .forEach(System.out::println);
     }
 
     /**
