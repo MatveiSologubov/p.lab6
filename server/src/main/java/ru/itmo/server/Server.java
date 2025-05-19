@@ -9,8 +9,8 @@ import ru.itmo.common.util.Serializer;
 import ru.itmo.server.commands.*;
 import ru.itmo.server.managers.CollectionManager;
 import ru.itmo.server.managers.CommandManager;
+import ru.itmo.server.managers.ConsoleManager;
 import ru.itmo.server.managers.FileManager;
-import ru.itmo.server.managers.LogModeManager;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -22,23 +22,20 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.Scanner;
 import java.util.Set;
 
 public final class Server {
-    static final int PORT = 1234;
-    static final int PACKET_SIZE = 2048;
-
-    static final CommandManager commandManager = new CommandManager();
-    static final CollectionManager collectionManager = new CollectionManager();
-    static final FileManager fileManager = new FileManager();
+    private static final int PORT = 1234;
+    private static final int PACKET_SIZE = 2048;
     private final static Logger logger = LogManager.getLogger(Server.class);
-    static String filePath;
+    private static String filePath;
+    private final CommandManager commandManager = new CommandManager();
+    private final CollectionManager collectionManager = new CollectionManager();
+    private final FileManager fileManager = new FileManager();
     private DatagramChannel channel;
     private Selector selector;
 
     private volatile boolean running = true;
-    private volatile boolean commandMode = false;
 
     private Server() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -67,7 +64,11 @@ public final class Server {
             System.exit(0);
         }
 
+
         collectionManager.setCollection(fileManager.load(filePath));
+
+        ConsoleManager consoleManager = new ConsoleManager(this::stop, fileManager, collectionManager, filePath);
+        new Thread(consoleManager).start();
 
         commandManager.addCommand("info", new Info(collectionManager));
         commandManager.addCommand("show", new Show(collectionManager));
@@ -90,8 +91,6 @@ public final class Server {
     public void start() {
         logger.info("Starting sever main loop");
 
-        new Thread(this::readConsoleCommands).start();
-
         ByteBuffer buffer = ByteBuffer.allocate(PACKET_SIZE);
 
         try {
@@ -107,6 +106,10 @@ public final class Server {
         } finally {
             shutdown();
         }
+    }
+
+    public void stop() {
+        running = false;
     }
 
     private void shutdown() {
@@ -133,59 +136,6 @@ public final class Server {
         }
 
         logger.info("Server shutdown completed");
-    }
-
-    private void readConsoleCommands() {
-        try (Scanner scanner = new Scanner(System.in)) {
-            System.out.println("Press Enter to enter command mode...");
-
-            while (running) {
-                // Ожидание первого Enter
-                scanner.nextLine();
-
-                // Переход в режим команд
-                enterCommandMode();
-
-                // Основной цикл ввода команд
-                while (commandMode && running) {
-                    System.out.print("server> ");
-                    if (scanner.hasNextLine()) {
-                        String command = scanner.nextLine().trim();
-                        handleServerCommands(command);
-                    }
-                }
-            }
-        }
-    }
-
-    private void enterCommandMode() {
-        LogModeManager.disableConsoleLogging();
-        commandMode = true;
-        System.out.println("[Command Mode]");
-        System.out.println("Available commands:");
-        System.out.println("  watch - Enable live logging");
-        System.out.println("  save  - Saves collection to file");
-        System.out.println("  exit  - Shutdown server");
-    }
-
-    private void handleServerCommands(String command) {
-        switch (command) {
-            case "save" -> {
-                fileManager.save(collectionManager.getCollection(), filePath);
-                logger.info("Collection manually saved to {}", filePath);
-            }
-            case "exit" -> {
-                logger.info("Shutting down server due to command");
-                running = false;
-                selector.wakeup();
-            }
-            case "watch" -> {
-                LogModeManager.enableConsoleLogging();
-                System.out.println("Live logging enabled");
-                commandMode = false;
-            }
-            default -> System.out.println("Unknown command");
-        }
     }
 
     private void processSelectedKeys(ByteBuffer buffer) throws IOException {
