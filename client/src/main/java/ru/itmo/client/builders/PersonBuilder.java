@@ -11,7 +11,7 @@ import java.util.Scanner;
 /**
  * Class for building Persons
  */
-public class PersonBuilder extends Builder<Person> {
+public class PersonBuilder implements Builder<Person> {
     private final Scanner scanner;
 
     public PersonBuilder(Scanner scanner) {

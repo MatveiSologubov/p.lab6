@@ -13,7 +13,7 @@ import java.util.Scanner;
 /**
  * Class for building Tickets
  */
-public class TicketBuilder extends Builder<Ticket> {
+public class TicketBuilder implements Builder<Ticket> {
     private final Scanner scanner;
 
     public TicketBuilder(Scanner scanner) {

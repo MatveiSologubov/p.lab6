@@ -36,12 +36,4 @@ public class Update extends Command {
 
         return new UpdateResponse(false, "Ticket with id " + updateRequest.getId() + " not found");
     }
-
-    /**
-     * @return Help message
-     */
-    @Override
-    public String getHelp() {
-        return "Changes element with specified id. Usage: update id {element}";
-    }
 }

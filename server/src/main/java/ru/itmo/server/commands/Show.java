@@ -30,12 +30,4 @@ public class Show extends Command {
 
         return new ShowResponse(tickets);
     }
-
-    /**
-     * @return Help message
-     */
-    @Override
-    public String getHelp() {
-        return "This command will show current collection";
-    }
 }

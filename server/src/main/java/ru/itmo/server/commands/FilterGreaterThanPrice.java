@@ -46,12 +46,4 @@ public class FilterGreaterThanPrice extends Command {
 
         return new FilterGreaterThanPriceResponse(true, null, result);
     }
-
-    /**
-     * @return Help message
-     */
-    @Override
-    public String getHelp() {
-        return "";
-    }
 }

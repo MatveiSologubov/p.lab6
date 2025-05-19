@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
  * 'Info' command print information about current collection
  */
 public class Info extends Command {
-    CollectionManager collectionManager;
+    private final CollectionManager collectionManager;
 
     public Info(CollectionManager collectionManager) {
         this.collectionManager = collectionManager;
@@ -29,13 +29,5 @@ public class Info extends Command {
         LocalDateTime initTime = collectionManager.getInitTime();
 
         return new InfoResponse(collectionType, collectionSize, initTime);
-    }
-
-    /**
-     * @return Help message
-     */
-    @Override
-    public String getHelp() {
-        return "This command print information about current collection.";
     }
 }

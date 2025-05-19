@@ -34,17 +34,9 @@ public class AddIfMin extends Command {
         Ticket minTicket = Collections.min(collectionManager.getCollection());
         if (ticket.compareTo(minTicket) < 0) {
             collectionManager.add(ticket);
-            return new AddIfMinResponse(true, "Added Ticket with price " + ticket.getPrice() + " to collection");
+            return new AddIfMinResponse(true, null);
         }
 
-        return new AddIfMinResponse(false, "Ticket not added to collection. Current min price is " + minTicket.getPrice());
-    }
-
-    /**
-     * @return Help message
-     */
-    @Override
-    public String getHelp() {
-        return "";
+        return new AddIfMinResponse(false, null);
     }
 }

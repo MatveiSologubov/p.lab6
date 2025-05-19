@@ -28,23 +28,15 @@ public class AddIfMax extends Command {
 
         if (collectionManager.getCollection().isEmpty()) {
             collectionManager.add(ticket);
-            return new AddIfMaxResponse(true, "Added Ticket with price " + ticket.getPrice() + " to collection");
+            return new AddIfMaxResponse(true, null);
         }
 
         Ticket maxTicket = Collections.max(collectionManager.getCollection());
         if (ticket.compareTo(maxTicket) > 0) {
             collectionManager.add(ticket);
-            return new AddIfMaxResponse(true, "Added Ticket with price " + ticket.getPrice() + " to collection");
+            return new AddIfMaxResponse(true, null);
         }
 
         return new AddIfMaxResponse(false, "Ticket not added to collection. Current max price is " + maxTicket.getPrice());
-    }
-
-    /**
-     * @return Help message
-     */
-    @Override
-    public String getHelp() {
-        return "";
     }
 }

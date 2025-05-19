@@ -34,7 +34,9 @@ public class RemoveGreater extends NetworkCommand {
         TicketBuilder builder = new TicketBuilder(scannerManager.getScanner());
         Ticket ticket = builder.build();
 
-        RemoveGreaterResponse response = (RemoveGreaterResponse) client.sendAndReceive(new RemoveGreaterRequest(ticket));
+        RemoveGreaterRequest request = new  RemoveGreaterRequest(ticket);
+        RemoveGreaterResponse response;
+        response = (RemoveGreaterResponse) client.sendAndReceive(request);
 
         System.out.println(response.getMessage());
     }

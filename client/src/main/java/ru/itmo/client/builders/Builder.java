@@ -1,5 +1,5 @@
 package ru.itmo.client.builders;
 
-public abstract class Builder<T> {
-    public abstract T build();
+public interface Builder<T> {
+    T build();
 }

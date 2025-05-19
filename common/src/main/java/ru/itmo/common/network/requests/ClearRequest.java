@@ -1,7 +1,7 @@
 package ru.itmo.common.network.requests;
 
 public class ClearRequest extends Request {
-    public ClearRequest(String[] commandArgs) {
+    public ClearRequest() {
         super("clear");
     }
 }

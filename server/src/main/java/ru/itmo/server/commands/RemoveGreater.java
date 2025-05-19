@@ -38,12 +38,4 @@ public class RemoveGreater extends Command {
 
         return new RemoveGreaterResponse(true, "Collection now contains " + collection.size() + " tickets");
     }
-
-    /**
-     * @return Help message
-     */
-    @Override
-    public String getHelp() {
-        return "Removes all tickets bigger than specified element";
-    }
 }

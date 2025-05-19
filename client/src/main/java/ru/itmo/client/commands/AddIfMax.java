@@ -36,6 +36,11 @@ public class AddIfMax extends NetworkCommand {
 
         AddIfMaxResponse response = (AddIfMaxResponse) client.sendAndReceive(new AddIfMaxRequest(ticket));
 
+        if (response.isSuccess()){
+            System.out.println("Ticket is added to collection");
+            return;
+        }
+
         System.out.println(response.getMessage());
     }
 

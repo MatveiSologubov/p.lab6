@@ -2,7 +2,6 @@ package ru.itmo.client.commands;
 
 import ru.itmo.client.managers.CommandManager;
 import ru.itmo.client.managers.ScannerManager;
-import ru.itmo.client.network.UPDClient;
 import ru.itmo.common.exceptions.ScriptRecursionException;
 import ru.itmo.common.exceptions.WrongAmountOfArgumentsException;
 

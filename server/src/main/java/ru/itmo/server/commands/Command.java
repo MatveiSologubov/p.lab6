@@ -11,9 +11,4 @@ public abstract class Command {
      * @param request request from client
      */
     public abstract Response execute(Request request);
-
-    /**
-     * @return Help message
-     */
-    public abstract String getHelp();
 }

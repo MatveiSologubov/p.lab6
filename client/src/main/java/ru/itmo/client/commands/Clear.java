@@ -21,7 +21,7 @@ public class Clear extends NetworkCommand {
     public void execute(String[] args) throws WrongAmountOfArgumentsException, IOException {
         if (args.length != 0) throw new WrongAmountOfArgumentsException(0, args.length);
 
-        client.sendAndReceive(new ClearRequest(args));
+        client.sendAndReceive(new ClearRequest());
         System.out.println("Collection is cleared");
     }
 

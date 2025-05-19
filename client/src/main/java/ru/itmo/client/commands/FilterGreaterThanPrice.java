@@ -4,7 +4,7 @@ import ru.itmo.client.network.UPDClient;
 import ru.itmo.common.exceptions.WrongAmountOfArgumentsException;
 import ru.itmo.common.models.Ticket;
 import ru.itmo.common.network.requests.FilterGreaterThanPriceRequest;
-import ru.itmo.common.network.responses.FilterLessThanTypeResponse;
+import ru.itmo.common.network.responses.FilterGreaterThanPriceResponse;
 
 import java.io.IOException;
 
@@ -35,7 +35,8 @@ public class FilterGreaterThanPrice extends NetworkCommand {
         }
 
         FilterGreaterThanPriceRequest request = new FilterGreaterThanPriceRequest(price);
-        FilterLessThanTypeResponse response = (FilterLessThanTypeResponse) client.sendAndReceive(request);
+        FilterGreaterThanPriceResponse response;
+        response = (FilterGreaterThanPriceResponse) client.sendAndReceive(request);
 
         if (!response.isSuccess()) {
             System.out.println(response.getMessage());

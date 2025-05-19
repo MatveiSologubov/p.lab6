@@ -25,12 +25,4 @@ public class Clear extends Command {
 
         return new ClearResponse();
     }
-
-    /**
-     * @return Help message
-     */
-    @Override
-    public String getHelp() {
-        return "Clears the collection";
-    }
 }

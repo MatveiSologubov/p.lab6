@@ -27,12 +27,4 @@ public class Add extends Command {
         collectionManager.add(ticket);
         return new AddResponse(true);
     }
-
-    /**
-     * @return Help message
-     */
-    @Override
-    public String getHelp() {
-        return "";
-    }
 }

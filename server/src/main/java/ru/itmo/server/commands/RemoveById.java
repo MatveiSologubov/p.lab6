@@ -11,7 +11,7 @@ import ru.itmo.server.managers.CollectionManager;
  * 'Remove By ID' command removes Ticket with specified id
  */
 public class RemoveById extends Command {
-    final CollectionManager collectionManager;
+    private final CollectionManager collectionManager;
 
     public RemoveById(CollectionManager collectionManager) {
         this.collectionManager = collectionManager;
@@ -35,13 +35,5 @@ public class RemoveById extends Command {
             }
         }
         return new RemoveByIdResponse(false, "Ticket with id " + removeByIdRequest.getId() + " was not found");
-    }
-
-    /**
-     * @return Help message
-     */
-    @Override
-    public String getHelp() {
-        return "Removes element from collection with specified id";
     }
 }

@@ -43,12 +43,4 @@ public class FilterLessThanType extends Command {
 
         return new FilterLessThanTypeResponse(true, null, result);
     }
-
-    /**
-     * @return Help message
-     */
-    @Override
-    public String getHelp() {
-        return "";
-    }
 }

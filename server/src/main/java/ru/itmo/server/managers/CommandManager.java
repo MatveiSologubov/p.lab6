@@ -18,8 +18,4 @@ public class CommandManager {
     public Command getCommand(String name) {
         return commands.get(name);
     }
-
-    public Map<String, Command> getAllCommands() {
-        return commands;
-    }
 }

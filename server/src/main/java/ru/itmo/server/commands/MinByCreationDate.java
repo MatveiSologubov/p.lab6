@@ -9,7 +9,7 @@ import ru.itmo.server.managers.CollectionManager;
 import java.util.Set;
 
 public class MinByCreationDate extends Command {
-    CollectionManager collectionManager;
+    private final CollectionManager collectionManager;
 
     public MinByCreationDate(CollectionManager collectionManager) {
         this.collectionManager = collectionManager;
@@ -35,13 +35,5 @@ public class MinByCreationDate extends Command {
         }
 
         return new MinByCreationDateResponse(true, minTicket, null);
-    }
-
-    /**
-     * @return Help message
-     */
-    @Override
-    public String getHelp() {
-        return "";
     }
 }

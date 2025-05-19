@@ -36,6 +36,11 @@ public class AddIfMin extends NetworkCommand {
 
         AddIfMinResponse response = (AddIfMinResponse) client.sendAndReceive(new AddIfMinRequest(ticket));
 
+        if (response.isSuccess()){
+            System.out.println("Ticket is added to collection");
+            return;
+        }
+
         System.out.println(response.getMessage());
     }
 
