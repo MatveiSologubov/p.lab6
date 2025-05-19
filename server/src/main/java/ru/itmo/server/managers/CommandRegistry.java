@@ -8,10 +8,10 @@ import java.util.Map;
 /**
  * Class to store and get commands
  */
-public class CommandManager {
+public class CommandRegistry {
     private final Map<String, Command> commands = new HashMap<>();
 
-    public void addCommand(String name, Command command) {
+    public void registerCommand(String name, Command command) {
         commands.put(name, command);
     }
 

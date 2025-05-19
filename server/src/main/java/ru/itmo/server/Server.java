@@ -17,7 +17,7 @@ import java.nio.ByteBuffer;
 public final class Server {
     private final static Logger logger = LogManager.getLogger(Server.class);
     private static String filePath;
-    private final CommandManager commandManager = new CommandManager();
+    private final CommandRegistry commandRegistry;
     private final CollectionManager collectionManager = new CollectionManager();
     private final NetworkManager networkManager;
     private final FileManager fileManager = new FileManager();
@@ -45,18 +45,20 @@ public final class Server {
         ConsoleManager consoleManager = new ConsoleManager(this::stop, fileManager, collectionManager, filePath);
         new Thread(consoleManager).start();
 
-        commandManager.addCommand("info", new Info(collectionManager));
-        commandManager.addCommand("show", new Show(collectionManager));
-        commandManager.addCommand("clear", new Clear(collectionManager));
-        commandManager.addCommand("add", new Add(collectionManager));
-        commandManager.addCommand("update", new Update(collectionManager));
-        commandManager.addCommand("remove_by_id", new RemoveById(collectionManager));
-        commandManager.addCommand("add_if_max", new AddIfMax(collectionManager));
-        commandManager.addCommand("add_if_min", new AddIfMin(collectionManager));
-        commandManager.addCommand("remove_greater", new RemoveGreater(collectionManager));
-        commandManager.addCommand("min_by_creation_date", new MinByCreationDate(collectionManager));
-        commandManager.addCommand("filter_less_than_type", new FilterLessThanType(collectionManager));
-        commandManager.addCommand("filter_greater_than_price", new FilterGreaterThanPrice(collectionManager));
+        commandRegistry = new CommandRegistry() {{
+            registerCommand("info", new Info(collectionManager));
+            registerCommand("show", new Show(collectionManager));
+            registerCommand("clear", new Clear(collectionManager));
+            registerCommand("add", new Add(collectionManager));
+            registerCommand("update", new Update(collectionManager));
+            registerCommand("remove_by_id", new RemoveById(collectionManager));
+            registerCommand("add_if_max", new AddIfMax(collectionManager));
+            registerCommand("add_if_min", new AddIfMin(collectionManager));
+            registerCommand("remove_greater", new RemoveGreater(collectionManager));
+            registerCommand("min_by_creation_date", new MinByCreationDate(collectionManager));
+            registerCommand("filter_less_than_type", new FilterLessThanType(collectionManager));
+            registerCommand("filter_greater_than_price", new FilterGreaterThanPrice(collectionManager));
+        }};
     }
 
     public static void main(String[] args) {
@@ -99,7 +101,7 @@ public final class Server {
             Request request = (Request) Serializer.deserialize(data);
             logger.info("Processing command '{}' from {}", request.name(), clientAddress);
 
-            Command command = commandManager.getCommand(request.name());
+            Command command = commandRegistry.getCommand(request.name());
             Response response = new NullResponse();
             if (command != null) {
                 response = command.execute(request);
