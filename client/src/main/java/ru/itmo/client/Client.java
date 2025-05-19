@@ -4,16 +4,13 @@ import ru.itmo.client.commands.*;
 import ru.itmo.client.managers.CommandRegistry;
 import ru.itmo.client.managers.ScannerManager;
 import ru.itmo.client.network.UPDClient;
+import ru.itmo.common.util.Config;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
 
 public final class Client {
-    final int PORT = 1234;
-    final int BUFFER_SIZE = 2048;
-    final String HOST = "127.0.0.1";
-
     final CommandRegistry commandRegistry;
     final Scanner scanner = new Scanner(System.in);
     final ScannerManager scannerManager = new ScannerManager(scanner);
@@ -23,7 +20,7 @@ public final class Client {
 
     private Client() {
         try {
-            updClient = new UPDClient(HOST, PORT, BUFFER_SIZE);
+            updClient = new UPDClient(Config.defaultConfig());
         } catch (IOException e) {
             System.out.println("Error initializing upd client");
             System.exit(1);

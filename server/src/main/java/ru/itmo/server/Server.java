@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import ru.itmo.common.network.requests.Request;
 import ru.itmo.common.network.responses.NullResponse;
 import ru.itmo.common.network.responses.Response;
+import ru.itmo.common.util.Config;
 import ru.itmo.common.util.Serializer;
 import ru.itmo.server.commands.*;
 import ru.itmo.server.managers.*;
@@ -14,8 +15,6 @@ import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 
 public final class Server {
-    private static final int PORT = 1234;
-    private static final int PACKET_SIZE = 2048;
     private final static Logger logger = LogManager.getLogger(Server.class);
     private static String filePath;
     private final CommandManager commandManager = new CommandManager();
@@ -41,7 +40,7 @@ public final class Server {
 
         collectionManager.setCollection(fileManager.load(filePath));
 
-        networkManager = new NetworkManager(PORT, PACKET_SIZE);
+        networkManager = new NetworkManager(Config.defaultConfig());
 
         ConsoleManager consoleManager = new ConsoleManager(this::stop, fileManager, collectionManager, filePath);
         new Thread(consoleManager).start();
@@ -106,35 +105,12 @@ public final class Server {
                 response = command.execute(request);
             }
 
-            sendResponse(response, clientAddress);
+            networkManager.sendResponse(response, clientAddress);
         } catch (Exception e) {
             logger.error("Request processing error", e);
         }
     }
 
-    private void sendResponse(Response response, SocketAddress clientAddress) {
-        try {
-            byte[] data = Serializer.serialize(response);
-            final int HEADER_SIZE = 8;
-            final int CHUNK_SIZE = PACKET_SIZE - HEADER_SIZE;
-            int totalChunks = (int) Math.ceil((double) data.length / CHUNK_SIZE);
-
-            for (int i = 0; i < totalChunks; i++) {
-                int offset = i * CHUNK_SIZE;
-                int len = Math.min(CHUNK_SIZE, data.length - offset);
-                ByteBuffer buf = ByteBuffer.allocate(HEADER_SIZE + len);
-                buf.putInt(totalChunks);
-                buf.putInt(i);
-                buf.put(data, offset, len);
-                buf.flip();
-
-                networkManager.send(buf, clientAddress);
-                logger.debug("Sent chunk {}/{} to {}", i + 1, totalChunks, clientAddress);
-            }
-        } catch (Exception e) {
-            logger.warn("Failed to send response to {}", clientAddress, e);
-        }
-    }
 
     private void shutdown() {
         logger.info("Starting server shutdown");
