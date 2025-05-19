@@ -5,7 +5,6 @@ public class RemoveByIdResponse extends Response {
     private final String message;
 
     public RemoveByIdResponse(boolean success, String message) {
-        super("remove_by_id");
         this.success = success;
         this.message = message;
     }

@@ -10,7 +10,6 @@ public class FilterGreaterThanPriceResponse extends Response {
     private final Set<Ticket> tickets;
 
     public FilterGreaterThanPriceResponse(boolean success, String message, Set<Ticket> tickets) {
-        super("filter_greater_than_price");
         this.success = success;
         this.message = message;
         this.tickets = tickets;

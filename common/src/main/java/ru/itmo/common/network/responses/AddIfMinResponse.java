@@ -5,7 +5,6 @@ public class AddIfMinResponse extends Response {
     private final String message;
 
     public AddIfMinResponse(boolean success, String message) {
-        super("add");
         this.success = success;
         this.message = message;
     }

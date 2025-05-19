@@ -5,7 +5,6 @@ public class RemoveGreaterResponse extends Response {
     private final String message;
 
     public RemoveGreaterResponse(boolean success, String message) {
-        super("remove_greater");
         this.success = success;
         this.message = message;
     }

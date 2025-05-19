@@ -8,7 +8,6 @@ public class InfoResponse extends Response {
     private final LocalDateTime initTime;
 
     public InfoResponse(String collectionType, int collectionSize, LocalDateTime initTime) {
-        super("info");
         this.collectionType = collectionType;
         this.collectionSize = collectionSize;
         this.initTime = initTime;

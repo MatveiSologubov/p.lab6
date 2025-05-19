@@ -8,7 +8,6 @@ public class ShowResponse extends Response {
     final Set<Ticket> tickets;
 
     public ShowResponse(Set<Ticket> tickets) {
-        super("show");
         this.tickets = tickets;
     }
 

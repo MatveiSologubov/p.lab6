@@ -5,7 +5,6 @@ public class UpdateResponse extends Response {
     private final String message;
 
     public UpdateResponse(boolean success, String message) {
-        super("update");
         this.success = success;
         this.message = message;
     }
