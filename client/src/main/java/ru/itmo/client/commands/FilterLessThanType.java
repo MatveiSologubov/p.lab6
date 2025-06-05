@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 /**
- * 'Filter Less Than Type' prints all ticket which have TicketType less than specified
+ * 'Filter Less Than Type' command prints all Tickets which have TicketType less than specified
  */
 public class FilterLessThanType extends NetworkCommand {
     public FilterLessThanType(UPDClient client) {

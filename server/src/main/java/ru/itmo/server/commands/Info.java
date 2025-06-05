@@ -8,7 +8,7 @@ import ru.itmo.server.managers.CollectionManager;
 import java.time.LocalDateTime;
 
 /**
- * 'Info' command print information about current collection
+ * 'Info' command returns information about current collection
  */
 public class Info extends Command {
     private final CollectionManager collectionManager;

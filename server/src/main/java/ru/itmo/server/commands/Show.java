@@ -10,7 +10,7 @@ import ru.itmo.server.managers.CollectionManager;
 import java.util.Set;
 
 /**
- * 'Show' command prints all Tickets in collection
+ * 'Show' command returns all Tickets in collection
  */
 public class Show extends Command {
     private final CollectionManager collectionManager;

@@ -11,6 +11,9 @@ import ru.itmo.server.managers.CollectionManager;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * 'Filter Less Than Type' command returns all Tickets which have TicketType less than specified
+ */
 public class FilterLessThanType extends Command {
     private final CollectionManager collectionManager;
 

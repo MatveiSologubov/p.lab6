@@ -8,7 +8,7 @@ import ru.itmo.common.network.responses.RemoveByIdResponse;
 import java.io.IOException;
 
 /**
- * 'Remove By ID' command removes Ticket with specified id
+ * 'Remove By ID' command removes Ticket with specified id from collection
  */
 public class RemoveById extends NetworkCommand {
     public RemoveById(UPDClient client) {

@@ -1,7 +1,7 @@
 package ru.itmo.common.exceptions;
 
 /**
- * throws if command is provided with wrong amount of arguments
+ * thrown if command is provided with wrong amount of arguments
  */
 public class WrongAmountOfArgumentsException extends Exception {
     public WrongAmountOfArgumentsException(int expected, int actual) {

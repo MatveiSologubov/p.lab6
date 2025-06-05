@@ -14,11 +14,10 @@ import java.util.Set;
  * Manages collection
  */
 public class CollectionManager {
+    private final static Logger logger = LogManager.getLogger(CollectionManager.class);
     private final Set<Long> usedIds = new HashSet<>();
     private final LocalDateTime initTime;
     private final Set<Ticket> collection = new HashSet<>();
-
-    private final static Logger logger = LogManager.getLogger(CollectionManager.class);
 
     public CollectionManager() {
         this.initTime = LocalDateTime.now();

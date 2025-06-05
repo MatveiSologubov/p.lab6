@@ -25,6 +25,9 @@ public class Exit extends Command {
         exitHandler.run();
     }
 
+    /**
+     * @return Help message
+     */
     @Override
     public String getHelp() {
         return "Exits the program";

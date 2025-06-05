@@ -13,6 +13,10 @@ import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 
+/**
+ * Manages network communication using UDP.
+ * Handles receiving requests and sending responses in chunks.
+ */
 public class NetworkManager {
     private static final Logger logger = LogManager.getLogger(NetworkManager.class);
 
@@ -35,6 +39,13 @@ public class NetworkManager {
         logger.info("Server started on port {}", config.getPort());
     }
 
+    /**
+     * Receives data in chunks
+     *
+     * @param timeoutMs timeout after witch we will stop receiving
+     * @return received data
+     * @throws IOException if encounters one
+     */
     public Received receive(int timeoutMs) throws IOException {
         if (selector.select(timeoutMs) == 0) return null;
 
@@ -54,6 +65,12 @@ public class NetworkManager {
         return null;
     }
 
+    /**
+     * Sends response to client
+     *
+     * @param response      response to send
+     * @param clientAddress address to send response
+     */
     public void sendResponse(Response response, SocketAddress clientAddress) {
         try {
             byte[] data = Serializer.serialize(response);
@@ -77,11 +94,21 @@ public class NetworkManager {
         }
     }
 
+    /**
+     * Sends buffer to address
+     *
+     * @param buffer     buffer to send
+     * @param clientAddr address of the client
+     * @throws IOException if encounters one
+     */
     private void send(ByteBuffer buffer, SocketAddress clientAddr) throws IOException {
         channel.send(buffer, clientAddr);
         logger.debug("Sent {} bytes to {}", buffer.remaining(), clientAddr);
     }
 
+    /**
+     * Closes channel and selector when shutting down server
+     */
     public void close() {
         try {
             channel.close();
@@ -92,6 +119,9 @@ public class NetworkManager {
         }
     }
 
+    /**
+     * Inner class which represent received data
+     */
     public static class Received {
         public final ByteBuffer buffer;
         public final SocketAddress clientAddress;

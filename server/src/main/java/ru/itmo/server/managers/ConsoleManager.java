@@ -5,6 +5,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Scanner;
 
+/**
+ * Manages server console input and command execution.
+ * Provides commands for server administration.
+ */
 public class ConsoleManager implements Runnable {
     private static final Logger logger = LogManager.getLogger(ConsoleManager.class);
 
@@ -25,6 +29,9 @@ public class ConsoleManager implements Runnable {
         this.running = true;
     }
 
+    /**
+     * Entry point to Console Manager which contains its main loop
+     */
     @Override
     public void run() {
         try (Scanner scanner = new Scanner(System.in)) {
@@ -41,6 +48,9 @@ public class ConsoleManager implements Runnable {
         }
     }
 
+    /**
+     * Enters command mode
+     */
     private void enterCommandMode() {
         LogModeManager.disableConsoleLogging();
         commandMode = true;
@@ -50,6 +60,11 @@ public class ConsoleManager implements Runnable {
         System.out.println("  exit  - Shutdown server");
     }
 
+    /**
+     * Handles command based on string typed
+     *
+     * @param command string to handle
+     */
     private void handle(String command) {
         switch (command) {
             case "save" -> {

@@ -11,7 +11,7 @@ import ru.itmo.common.network.responses.AddIfMaxResponse;
 import java.io.IOException;
 
 /**
- * 'Add If Max' commands builds and adds element to collection if its valid and has maximum price
+ * 'Add If Max' command builds and adds Ticket to collection if its valid and has maximum price
  */
 public class AddIfMax extends NetworkCommand {
     private final ScannerManager scannerManager;
@@ -36,7 +36,7 @@ public class AddIfMax extends NetworkCommand {
 
         AddIfMaxResponse response = (AddIfMaxResponse) client.sendAndReceive(new AddIfMaxRequest(ticket));
 
-        if (response.isSuccess()){
+        if (response.isSuccess()) {
             System.out.println("Ticket is added to collection");
             return;
         }

@@ -11,7 +11,7 @@ import ru.itmo.common.network.responses.RemoveGreaterResponse;
 import java.io.IOException;
 
 /**
- * 'Remove Greater' command builds ticket and then removes all tickets with bigger price than built ticket
+ * 'Remove Greater' command builds Ticket and then removes all Tickets with bigger price than built Ticket
  */
 public class RemoveGreater extends NetworkCommand {
     private final ScannerManager scannerManager;
@@ -34,7 +34,7 @@ public class RemoveGreater extends NetworkCommand {
         TicketBuilder builder = new TicketBuilder(scannerManager.getScanner());
         Ticket ticket = builder.build();
 
-        RemoveGreaterRequest request = new  RemoveGreaterRequest(ticket);
+        RemoveGreaterRequest request = new RemoveGreaterRequest(ticket);
         RemoveGreaterResponse response;
         response = (RemoveGreaterResponse) client.sendAndReceive(request);
 

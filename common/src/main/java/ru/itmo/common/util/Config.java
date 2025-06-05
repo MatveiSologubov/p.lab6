@@ -1,5 +1,8 @@
 package ru.itmo.common.util;
 
+/**
+ * Stores network configuration parameters
+ */
 public final class Config {
     private final String host;
     private final int port;

@@ -10,6 +10,9 @@ import ru.itmo.server.managers.CollectionManager;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * 'Filter Greater Than Price' command returns every Ticket which has price greater than specified
+ */
 public class FilterGreaterThanPrice extends Command {
     private final CollectionManager collectionManager;
 

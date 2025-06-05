@@ -9,6 +9,9 @@ import ru.itmo.server.managers.CollectionManager;
 
 import java.util.Collections;
 
+/**
+ * 'Add If Max' command adds Ticket to collection if its valid and has maximum price
+ */
 public class AddIfMax extends Command {
     private final CollectionManager collectionManager;
 

@@ -8,7 +8,7 @@ import ru.itmo.common.network.responses.UpdateResponse;
 import ru.itmo.server.managers.CollectionManager;
 
 /**
- * 'Update' command builds Ticket and the updates Ticket with specified id with data from new Ticket
+ * 'Update' command updates Ticket with specified id with data from new Ticket
  */
 public class Update extends Command {
     private final CollectionManager collectionManager;

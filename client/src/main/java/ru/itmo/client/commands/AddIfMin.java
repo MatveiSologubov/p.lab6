@@ -11,7 +11,7 @@ import ru.itmo.common.network.responses.AddIfMinResponse;
 import java.io.IOException;
 
 /**
- * 'Add If Min' commands builds and adds element to collection if its valid and has minimum price
+ * 'Add If Min' command builds and adds Ticket to collection if its valid and has minimum price
  */
 public class AddIfMin extends NetworkCommand {
     private final ScannerManager scannerManager;
@@ -36,7 +36,7 @@ public class AddIfMin extends NetworkCommand {
 
         AddIfMinResponse response = (AddIfMinResponse) client.sendAndReceive(new AddIfMinRequest(ticket));
 
-        if (response.isSuccess()){
+        if (response.isSuccess()) {
             System.out.println("Ticket is added to collection");
             return;
         }

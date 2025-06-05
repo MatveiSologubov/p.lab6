@@ -9,6 +9,9 @@ import ru.itmo.common.network.responses.ShowResponse;
 import java.io.IOException;
 import java.util.Comparator;
 
+/**
+ * 'Show' command prints information of all the ticket in collection
+ */
 public class Show extends Command {
     final UPDClient client;
 

@@ -15,6 +15,9 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * UDP network client for server communication
+ */
 public class UPDClient {
     private final int PORT;
     private final int BUFFER_SIZE;

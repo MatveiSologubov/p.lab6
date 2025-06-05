@@ -9,6 +9,9 @@ import ru.itmo.server.managers.CollectionManager;
 
 import java.util.Collections;
 
+/**
+ * 'Add If Min' command adds Ticket to collection if its valid and has minimum price
+ */
 public class AddIfMin extends Command {
     private final CollectionManager collectionManager;
 

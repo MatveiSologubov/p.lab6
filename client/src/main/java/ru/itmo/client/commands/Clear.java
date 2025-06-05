@@ -6,6 +6,9 @@ import ru.itmo.common.network.requests.ClearRequest;
 
 import java.io.IOException;
 
+/**
+ * 'Clear' command empties the collection
+ */
 public class Clear extends NetworkCommand {
     public Clear(UPDClient client) {
         super(client);

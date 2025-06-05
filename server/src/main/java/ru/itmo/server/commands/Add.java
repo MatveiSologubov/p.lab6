@@ -7,6 +7,9 @@ import ru.itmo.common.network.responses.AddResponse;
 import ru.itmo.common.network.responses.Response;
 import ru.itmo.server.managers.CollectionManager;
 
+/**
+ * 'Add' command adds Ticket to collection if it is valid
+ */
 public class Add extends Command {
     private final CollectionManager collectionManager;
 

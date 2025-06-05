@@ -2,6 +2,9 @@ package ru.itmo.common.util;
 
 import java.io.*;
 
+/**
+ * Handles Java object serialization/deserialization
+ */
 public class Serializer {
     public static byte[] serialize(Object obj) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();

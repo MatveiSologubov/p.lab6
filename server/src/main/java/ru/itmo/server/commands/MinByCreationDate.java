@@ -10,6 +10,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Set;
 
+/**
+ * 'Min By Creation Date' command returns Ticket with minimum creation date
+ */
 public class MinByCreationDate extends Command {
     private final CollectionManager collectionManager;
 

@@ -10,7 +10,7 @@ import ru.itmo.server.managers.CollectionManager;
 import java.util.Set;
 
 /**
- * 'Remove Greater' command builds ticket and then removes all tickets with bigger price than built ticket
+ * 'Remove Greater' command removes all Tickets with bigger price than specified Ticket
  */
 public class RemoveGreater extends Command {
     private final CollectionManager collectionManager;

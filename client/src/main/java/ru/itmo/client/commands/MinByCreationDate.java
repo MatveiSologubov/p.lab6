@@ -8,9 +8,9 @@ import ru.itmo.common.network.responses.MinByCreationDateResponse;
 import java.io.IOException;
 
 /**
- * 'Min By Creation Date' print Ticket with minimum creation date
+ * 'Min By Creation Date' command print Ticket with minimum creation date
  */
-public class MinByCreationDate extends NetworkCommand{
+public class MinByCreationDate extends NetworkCommand {
     public MinByCreationDate(UPDClient client) {
         super(client);
     }
@@ -28,7 +28,7 @@ public class MinByCreationDate extends NetworkCommand{
         MinByCreationDateRequest request = new MinByCreationDateRequest();
         MinByCreationDateResponse response = (MinByCreationDateResponse) client.sendAndReceive(request);
 
-        if (response.isSuccess()){
+        if (response.isSuccess()) {
             System.out.println(response.getTicket());
             return;
         }

@@ -14,7 +14,7 @@ import java.util.Scanner;
 import java.util.Set;
 
 /**
- * 'Execute Script Command' executes script which is specified in args
+ * 'Execute Script' command executes script filepath to which is specified in args
  */
 public class ExecuteScript extends Command {
     private final static Set<String> runningScripts = new HashSet<>();

@@ -14,6 +14,10 @@ import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 
+/**
+ * Server application entry point.
+ * Initializes managers, handles shutdown hooks, and processes client requests.
+ */
 public final class Server {
     private final static Logger logger = LogManager.getLogger(Server.class);
     private static String filePath;

@@ -3,6 +3,9 @@ package ru.itmo.client.commands;
 import ru.itmo.client.managers.CommandRegistry;
 import ru.itmo.common.exceptions.WrongAmountOfArgumentsException;
 
+/**
+ * 'Help' command print help message for every command available in application
+ */
 public class Help extends Command {
     final CommandRegistry commandRegistry;
 

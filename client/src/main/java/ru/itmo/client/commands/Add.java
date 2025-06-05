@@ -11,7 +11,7 @@ import ru.itmo.common.network.responses.AddResponse;
 import java.io.IOException;
 
 /**
- * 'Add' commands builds and adds element to collection if its valid
+ * 'Add' command builds and adds Ticket to collection if its valid
  */
 public class Add extends NetworkCommand {
     final ScannerManager scannerManager;

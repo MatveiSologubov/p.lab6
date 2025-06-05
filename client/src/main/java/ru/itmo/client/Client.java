@@ -10,13 +10,15 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
 
+/**
+ * Main class for the client side of the application
+ */
 public final class Client {
     final CommandRegistry commandRegistry;
     final Scanner scanner = new Scanner(System.in);
     final ScannerManager scannerManager = new ScannerManager(scanner);
-    private UPDClient updClient;
-
     boolean running = true;
+    private UPDClient updClient;
 
     private Client() {
         try {

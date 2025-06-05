@@ -8,7 +8,7 @@ import ru.itmo.common.network.responses.Response;
 import ru.itmo.server.managers.CollectionManager;
 
 /**
- * 'Remove By ID' command removes Ticket with specified id
+ * 'Remove By ID' command removes Ticket with specified id from collection
  */
 public class RemoveById extends Command {
     private final CollectionManager collectionManager;
