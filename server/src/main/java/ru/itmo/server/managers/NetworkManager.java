@@ -42,7 +42,7 @@ public class NetworkManager {
     /**
      * Receives data in chunks
      *
-     * @param timeoutMs timeout after witch we will stop receiving
+     * @param timeoutMs timeout after which we will stop receiving
      * @return received data
      * @throws IOException if encounters one
      */
