@@ -57,7 +57,7 @@ public class ConsoleManager implements Runnable {
         System.out.println("[Command Mode]");
         System.out.println("  watch - Enable live logging");
         System.out.println("  save  - Save collection");
-        System.out.println("  exit  - Shutdown server");
+        System.out.println("  shut  - Shutdown server");
     }
 
     /**
@@ -71,7 +71,7 @@ public class ConsoleManager implements Runnable {
                 fileManager.save(collectionManager.getCollection(), filePath);
                 logger.info("Collection manually saved to {}", filePath);
             }
-            case "exit" -> {
+            case "shut" -> {
                 logger.info("Shutting down server due to command");
                 running = false;
                 serverShutdownHook.run();
