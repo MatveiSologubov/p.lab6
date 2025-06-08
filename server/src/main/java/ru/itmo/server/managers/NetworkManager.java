@@ -36,7 +36,7 @@ public class NetworkManager {
         this.BUFFER_SIZE = config.getBufferSize();
         this.HEADER_SIZE = config.getHeaderSize();
 
-        logger.info("Server started on port {}", config.getPort());
+        logger.info("Server started on {}", channel.getLocalAddress());
     }
 
     /**

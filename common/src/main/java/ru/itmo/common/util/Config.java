@@ -19,7 +19,7 @@ public final class Config {
     }
 
     public static Config defaultConfig() {
-        return new Config("127.0.0.1", 1234, 2048, 8, 3000);
+        return new Config("192.168.10.80", 3668, 1024, 8, 3000);
     }
 
     public String getHost() {
