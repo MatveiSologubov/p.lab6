@@ -40,7 +40,7 @@ public class NetworkManager {
     }
 
     /**
-     * Receives data in chunks
+     * Receives data from client
      *
      * @param timeoutMs timeout after which we will stop receiving
      * @return received data
@@ -66,9 +66,9 @@ public class NetworkManager {
     }
 
     /**
-     * Sends response to client
+     * Sends response to client in chunks
      *
-     * @param response      response to send
+     * @param response response to send
      * @param clientAddress address to send response
      */
     public void sendResponse(Response response, SocketAddress clientAddress) {
