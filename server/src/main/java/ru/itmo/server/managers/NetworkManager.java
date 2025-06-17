@@ -103,7 +103,7 @@ public class NetworkManager {
      */
     private void send(ByteBuffer buffer, SocketAddress clientAddr) throws IOException {
         channel.send(buffer, clientAddr);
-        logger.debug("Sent {} bytes to {}", buffer.remaining(), clientAddr);
+        logger.debug("Sent {} bytes to {}", buffer.capacity(), clientAddr);
     }
 
     /**
