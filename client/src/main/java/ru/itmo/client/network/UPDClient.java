@@ -37,11 +37,53 @@ public class UPDClient {
         this.HEADER_SIZE = config.getHeaderSize();
     }
 
+    /**
+     * Sends request to server and then receives response
+     *
+     * @param request request to send
+     * @return response from server
+     * @throws IOException if timeout reached or socket throws one
+     */
     public Response sendAndReceive(Request request) throws IOException {
         byte[] data = Serializer.serialize(request);
-        DatagramPacket packet = new DatagramPacket(data, data.length, serverAddress, PORT);
-        socket.send(packet);
+        sendDataInChunks(data);
 
+        byte[] receivedData = receiveDataInChunks();
+        return (Response) Serializer.deserialize(receivedData);
+    }
+
+    /**
+     * Sends byte array to server
+     *
+     * @param data byte array to send to server
+     * @throws IOException if socket throws one
+     */
+    private void sendDataInChunks(byte[] data) throws IOException {
+        final int CHUNK_SIZE = BUFFER_SIZE - HEADER_SIZE;
+        int totalChunks = (int) Math.ceil((double) data.length / CHUNK_SIZE);
+
+        for (int i = 0; i < totalChunks; i++) {
+            int offset = i * CHUNK_SIZE;
+            int currentLength = Math.min(CHUNK_SIZE, data.length - offset);
+
+            ByteBuffer buffer = ByteBuffer.allocate(HEADER_SIZE + currentLength);
+            buffer.putInt(totalChunks);
+            buffer.putInt(i);
+            buffer.put(data, offset, currentLength);
+            buffer.flip();
+
+            DatagramPacket packet = new DatagramPacket(buffer.array(), buffer.limit(), serverAddress, PORT);
+            socket.send(packet);
+        }
+    }
+
+    /**
+     * Receives data in chunks from server
+     *
+     * @return byte array received from server
+     * @throws IOException if reaches timeout
+     */
+    private byte[] receiveDataInChunks() throws IOException {
         Map<Integer, byte[]> chunks = new TreeMap<>();
         int totalNumberOfChunks = -1;
         long startTime = System.currentTimeMillis();
@@ -52,7 +94,7 @@ public class UPDClient {
             }
 
             byte[] buffer = new byte[BUFFER_SIZE];
-            packet = new DatagramPacket(buffer, buffer.length);
+            DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
             socket.receive(packet);
 
             byte[] receivedData = Arrays.copyOf(packet.getData(), packet.getLength());
@@ -75,7 +117,6 @@ public class UPDClient {
         for (byte[] chunk : chunks.values()) {
             outputStream.write(chunk, 0, chunk.length);
         }
-        byte[] response = outputStream.toByteArray();
-        return (Response) Serializer.deserialize(response);
+        return outputStream.toByteArray();
     }
 }

@@ -6,12 +6,16 @@ import ru.itmo.common.network.responses.Response;
 import ru.itmo.common.util.Config;
 import ru.itmo.common.util.Serializer;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Manages network communication using UDP.
@@ -40,35 +44,61 @@ public class NetworkManager {
     }
 
     /**
-     * Receives data from client
+     * Receives data in chunks from client
      *
      * @param timeoutMs timeout after which we will stop receiving
      * @return received data
      * @throws IOException if encounters one
      */
     public Received receive(int timeoutMs) throws IOException {
-        if (selector.select(timeoutMs) == 0) return null;
+        long deadline = System.currentTimeMillis() + timeoutMs;
 
-        for (SelectionKey key : selector.selectedKeys()) {
-            selector.selectedKeys().remove(key);
-            if (!key.isValid() || !key.isReadable()) continue;
+        Map<SocketAddress, TreeMap<Integer, byte[]>> pending = new HashMap<>();
+        Map<SocketAddress, Integer> expectedTotals = new HashMap<>();
 
-            ByteBuffer buf = ByteBuffer.allocate(BUFFER_SIZE);
-            SocketAddress addr = channel.receive(buf);
-            if (addr == null) continue;
+        while (true) {
+            long remainingTime = deadline - System.currentTimeMillis();
+            if (remainingTime <= 0 || selector.select(remainingTime) == 0) {
+                return null;
+            }
 
-            buf.flip();
-            logger.debug("Received request from {}", addr);
-            return new Received(buf, addr);
+            for (SelectionKey key : selector.selectedKeys()) {
+                selector.selectedKeys().remove(key);
+                if (!key.isValid() || !key.isReadable()) continue;
+
+                ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+                SocketAddress addr = channel.receive(buffer);
+                if (addr == null) continue;
+                buffer.flip();
+
+                int totalNumberOfChunks = buffer.getInt();
+                int index = buffer.getInt();
+
+                byte[] chunk = new byte[buffer.remaining()];
+                buffer.get(chunk);
+
+                pending.computeIfAbsent(addr, k -> new TreeMap<>()).put(index, chunk);
+                logger.debug("Received chunk {}/{} from {}", index + 1, totalNumberOfChunks, addr);
+
+                expectedTotals.putIfAbsent(addr, totalNumberOfChunks);
+
+                if (pending.get(addr).size() == expectedTotals.get(addr)) {
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    for (byte[] part : pending.get(addr).values()) {
+                        out.write(part);
+                    }
+                    ByteBuffer full = ByteBuffer.wrap(out.toByteArray());
+                    logger.debug("Received request from {}", addr);
+                    return new Received(full, addr);
+                }
+            }
         }
-
-        return null;
     }
 
     /**
      * Sends response to client in chunks
      *
-     * @param response response to send
+     * @param response      response to send
      * @param clientAddress address to send response
      */
     public void sendResponse(Response response, SocketAddress clientAddress) {
